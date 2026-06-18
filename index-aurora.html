@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>inswave — AI 혁신의 물결</title>
+<meta name="description" content="2002년 국내 최초 웹 표준 UI/UX 개발 플랫폼 전문기업. WebSquare AI와 생성형 AI 기반 UI 자동 생성." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+
+<style>
+  :root {
+    --navy-900: #050813;
+    --navy-800: #070b1a;
+    --navy-700: #0b1228;
+    --cyan: #36e8ff;
+    --blue: #4d7cff;
+    --electric: #6ee7ff;
+    --ink: #eaf2ff;
+    --ink-dim: #9fb2d6;
+    --ink-faint: #6c7da3;
+    --line: rgba(120, 160, 220, 0.14);
+    --glass: rgba(13, 22, 46, 0.45);
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body { height: 100%; }
+
+  body {
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--navy-800);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow: hidden;
+  }
+
+  /* ---------- Background layers ---------- */
+  #scene {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background:
+      radial-gradient(1200px 800px at 78% 18%, rgba(54, 232, 255, 0.10), transparent 60%),
+      radial-gradient(1000px 700px at 12% 88%, rgba(77, 124, 255, 0.12), transparent 62%),
+      linear-gradient(160deg, #070b1a 0%, #060a18 45%, #050712 100%);
+  }
+
+  /* particle canvas */
+  #net {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    display: block;
+  }
+
+  /* vignette + grain overlay on top of canvas, below content */
+  .vignette {
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background:
+      radial-gradient(120% 100% at 50% 40%, transparent 55%, rgba(3, 6, 15, 0.55) 100%);
+  }
+
+  /* ---------- Layout shell ---------- */
+  .shell {
+    position: relative;
+    z-index: 3;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: clamp(20px, 3vw, 40px);
+  }
+
+  /* ---------- Navigation ---------- */
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 14px clamp(16px, 2vw, 26px);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: linear-gradient(180deg, rgba(20, 32, 64, 0.42), rgba(8, 14, 30, 0.28));
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    box-shadow: 0 10px 40px -20px rgba(0, 0, 0, 0.8);
+  }
+
+  .logo {
+    font-family: "Space Grotesk", sans-serif;
+    font-weight: 700;
+    font-size: 1.25rem;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo .dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #aef6ff, var(--cyan));
+    box-shadow: 0 0 14px var(--cyan), 0 0 28px rgba(54, 232, 255, 0.6);
+  }
+
+  .menu {
+    display: flex;
+    gap: clamp(18px, 2.2vw, 36px);
+    list-style: none;
+  }
+  .menu a {
+    color: var(--ink-dim);
+    text-decoration: none;
+    font-size: 0.92rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    position: relative;
+    padding: 6px 2px;
+    transition: color 0.3s var(--ease);
+  }
+  .menu a::after {
+    content: "";
+    position: absolute;
+    left: 0; bottom: 0;
+    width: 100%; height: 1px;
+    background: linear-gradient(90deg, var(--cyan), var(--blue));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.35s var(--ease);
+  }
+  .menu a:hover, .menu a:focus-visible { color: var(--ink); }
+  .menu a:hover::after, .menu a:focus-visible::after { transform: scaleX(1); }
+
+  .nav-cta {
+    font-family: "Inter", sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--navy-900);
+    background: linear-gradient(180deg, #9af2ff, var(--cyan));
+    border: none;
+    border-radius: 12px;
+    padding: 11px 20px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    box-shadow: 0 6px 22px -8px rgba(54, 232, 255, 0.7);
+    transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease);
+  }
+  .nav-cta:hover, .nav-cta:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px -8px rgba(54, 232, 255, 0.85);
+  }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    max-width: 1100px;
+    margin: 0 auto;
+    width: 100%;
+    padding: clamp(20px, 4vh, 60px) clamp(8px, 2vw, 30px);
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--electric);
+    padding: 8px 14px;
+    border: 1px solid rgba(110, 231, 255, 0.28);
+    border-radius: 999px;
+    background: rgba(54, 232, 255, 0.06);
+    margin-bottom: clamp(20px, 3vh, 32px);
+  }
+  .eyebrow .pulse {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--cyan);
+    box-shadow: 0 0 10px var(--cyan);
+    animation: pulse 2s infinite ease-in-out;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.35; transform: scale(0.6); }
+  }
+
+  h1 {
+    font-family: "Space Grotesk", sans-serif;
+    font-weight: 700;
+    font-size: clamp(2.8rem, 7.2vw, 6.4rem);
+    line-height: 0.98;
+    letter-spacing: -0.035em;
+    margin-bottom: clamp(20px, 3vh, 30px);
+    max-width: 16ch;
+  }
+  h1 .grad {
+    background: linear-gradient(110deg, #ffffff 10%, var(--electric) 55%, var(--blue) 95%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  .subcopy {
+    font-size: clamp(1.02rem, 1.5vw, 1.35rem);
+    color: var(--ink-dim);
+    max-width: 48ch;
+    line-height: 1.5;
+    margin-bottom: clamp(30px, 4.5vh, 46px);
+    font-weight: 400;
+  }
+
+  .actions {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .btn {
+    font-family: "Inter", sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    border-radius: 14px;
+    padding: 16px 30px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease), background 0.25s var(--ease), border-color 0.25s var(--ease);
+  }
+  .btn-primary {
+    color: var(--navy-900);
+    background: linear-gradient(180deg, #a8f4ff, var(--cyan));
+    border: 1px solid rgba(170, 246, 255, 0.6);
+    box-shadow: 0 14px 40px -14px rgba(54, 232, 255, 0.8);
+  }
+  .btn-primary:hover, .btn-primary:focus-visible {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 48px -14px rgba(54, 232, 255, 0.95);
+  }
+  .btn-primary .arrow { transition: transform 0.3s var(--ease); }
+  .btn-primary:hover .arrow { transform: translateX(4px); }
+
+  .btn-secondary {
+    color: var(--ink);
+    background: rgba(120, 160, 220, 0.06);
+    border: 1px solid var(--line);
+    backdrop-filter: blur(8px);
+  }
+  .btn-secondary:hover, .btn-secondary:focus-visible {
+    transform: translateY(-3px);
+    border-color: rgba(110, 231, 255, 0.5);
+    background: rgba(54, 232, 255, 0.08);
+  }
+
+  /* ---------- Scroll indicator ---------- */
+  .scroll-cue {
+    position: absolute;
+    bottom: clamp(18px, 3vh, 32px);
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    color: var(--ink-faint);
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    z-index: 3;
+  }
+  .mouse {
+    width: 24px; height: 38px;
+    border: 1.6px solid rgba(159, 178, 214, 0.5);
+    border-radius: 14px;
+    display: flex;
+    justify-content: center;
+    padding-top: 7px;
+  }
+  .mouse .wheel {
+    width: 3px; height: 7px; border-radius: 3px;
+    background: var(--electric);
+    box-shadow: 0 0 8px var(--cyan);
+    animation: wheel 1.8s infinite var(--ease);
+  }
+  @keyframes wheel {
+    0% { opacity: 0; transform: translateY(-4px); }
+    35% { opacity: 1; }
+    70% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 0; }
+  }
+
+  /* ---------- Focus styles ---------- */
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--electric);
+    outline-offset: 3px;
+    border-radius: 12px;
+  }
+
+  /* ---------- Entrance animation ---------- */
+  .reveal {
+    opacity: 0;
+    transform: translateY(26px);
+    filter: blur(6px);
+    animation: reveal 1s var(--ease) forwards;
+    animation-delay: var(--d, 0s);
+  }
+  @keyframes reveal {
+    to { opacity: 1; transform: translateY(0); filter: blur(0); }
+  }
+  nav.reveal { transform: translateY(-18px); }
+
+  /* ---------- Reduced motion ---------- */
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { animation: none; opacity: 1; transform: none; filter: none; }
+    .pulse, .wheel { animation: none; }
+    .btn, .nav-cta, .menu a { transition: none; }
+  }
+
+  @media (max-width: 720px) {
+    .menu, .nav-cta { display: none; }
+  }
+</style>
+</head>
+<body>
+  <div id="scene" aria-hidden="true"></div>
+  <canvas id="net" aria-hidden="true"></canvas>
+  <div class="vignette" aria-hidden="true"></div>
+
+  <div class="shell">
+    <nav class="reveal" style="--d:.05s" aria-label="Primary">
+      <a class="logo" href="#" aria-label="inswave 홈"><span class="dot" aria-hidden="true"></span>inswave</a>
+      <ul class="menu">
+        <li><a href="#product">제품</a></li>
+        <li><a href="#ai">WebSquare AI</a></li>
+        <li><a href="#case">도입사례</a></li>
+        <li><a href="#company">회사소개</a></li>
+      </ul>
+      <a class="nav-cta" href="#contact">문의하기</a>
+    </nav>
+
+    <main class="hero">
+      <span class="eyebrow reveal" style="--d:.2s"><span class="pulse" aria-hidden="true"></span>AI 혁신의 물결</span>
+      <h1 class="reveal" style="--d:.32s">웹 표준 UI/UX를 <span class="grad">AI로 혁신하다.</span></h1>
+      <p class="subcopy reveal" style="--d:.46s">2002년 국내 최초로 웹 표준 UI/UX 개발 플랫폼을 선보인 인스웨이브시스템즈. WebSquare AI와 생성형 AI 기반 UI 자동 생성으로 금융·공공·기업의 디지털 혁신을 이끕니다.</p>
+      <div class="actions reveal" style="--d:.6s">
+        <a class="btn btn-primary" href="#contact">도입 문의 <span class="arrow" aria-hidden="true">&rarr;</span></a>
+        <a class="btn btn-secondary" href="#product">제품 살펴보기</a>
+      </div>
+    </main>
+
+    <div class="scroll-cue reveal" style="--d:.9s" aria-hidden="true">
+      <div class="mouse"><span class="wheel"></span></div>
+      <span>스크롤</span>
+    </div>
+  </div>
+
+<script>
+(function () {
+  "use strict";
+
+  var canvas = document.getElementById("net");
+  var ctx = canvas.getContext("2d", { alpha: true });
+  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  var dpr = Math.min(window.devicePixelRatio || 1, 2);
+  var W = 0, H = 0;
+  var particles = [];
+  var mouse = { x: -9999, y: -9999, active: false };
+
+  // Distance thresholds (in CSS px)
+  var LINK_DIST = 130;        // particle-to-particle link distance
+  var MOUSE_DIST = 200;       // mouse influence radius
+
+  function resize() {
+    W = window.innerWidth;
+    H = window.innerHeight;
+    canvas.width = Math.floor(W * dpr);
+    canvas.height = Math.floor(H * dpr);
+    canvas.style.width = W + "px";
+    canvas.style.height = H + "px";
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    buildParticles();
+  }
+
+  function buildParticles() {
+    // scale count to viewport area, capped for performance
+    var area = W * H;
+    var count = Math.round(area / 13000);
+    count = Math.max(40, Math.min(count, 150));
+    particles = [];
+    for (var i = 0; i < count; i++) {
+      particles.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        vx: (Math.random() - 0.5) * 0.35,
+        vy: (Math.random() - 0.5) * 0.35,
+        r: Math.random() * 1.6 + 0.8
+      });
+    }
+  }
+
+  function step() {
+    ctx.clearRect(0, 0, W, H);
+
+    var p, i, j, q, dx, dy, dist;
+
+    // update positions + mouse attraction
+    for (i = 0; i < particles.length; i++) {
+      p = particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+
+      // wrap softly at edges
+      if (p.x < -20) p.x = W + 20;
+      else if (p.x > W + 20) p.x = -20;
+      if (p.y < -20) p.y = H + 20;
+      else if (p.y > H + 20) p.y = -20;
+
+      // mouse attraction / highlight
+      if (mouse.active) {
+        dx = mouse.x - p.x;
+        dy = mouse.y - p.y;
+        dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < MOUSE_DIST && dist > 0.1) {
+          var pull = (1 - dist / MOUSE_DIST) * 0.04;
+          p.vx += (dx / dist) * pull;
+          p.vy += (dy / dist) * pull;
+        }
+      }
+
+      // gentle velocity damping to keep things calm + bounded
+      p.vx *= 0.992;
+      p.vy *= 0.992;
+      // keep a minimum drift so the field never freezes
+      var sp = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+      if (sp < 0.05) {
+        p.vx += (Math.random() - 0.5) * 0.04;
+        p.vy += (Math.random() - 0.5) * 0.04;
+      }
+    }
+
+    // draw links between particles
+    for (i = 0; i < particles.length; i++) {
+      p = particles[i];
+      for (j = i + 1; j < particles.length; j++) {
+        q = particles[j];
+        dx = p.x - q.x;
+        dy = p.y - q.y;
+        dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < LINK_DIST) {
+          var a = (1 - dist / LINK_DIST) * 0.5;
+
+          // strengthen + brighten lines near cursor
+          var boost = 0;
+          if (mouse.active) {
+            var mx = (p.x + q.x) * 0.5 - mouse.x;
+            var my = (p.y + q.y) * 0.5 - mouse.y;
+            var md = Math.sqrt(mx * mx + my * my);
+            if (md < MOUSE_DIST) boost = (1 - md / MOUSE_DIST);
+          }
+
+          var alpha = Math.min(0.85, a + boost * 0.5);
+          var width = 0.6 + boost * 1.1;
+
+          // color shifts from blue (far) to cyan (near cursor)
+          var r = Math.round(77 + (54 - 77) * boost);
+          var g = Math.round(124 + (232 - 124) * boost);
+          var b = 255;
+
+          ctx.strokeStyle = "rgba(" + r + "," + g + "," + b + "," + alpha + ")";
+          ctx.lineWidth = width;
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(q.x, q.y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // draw nodes
+    for (i = 0; i < particles.length; i++) {
+      p = particles[i];
+      var near = 0;
+      if (mouse.active) {
+        dx = mouse.x - p.x;
+        dy = mouse.y - p.y;
+        dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < MOUSE_DIST) near = 1 - dist / MOUSE_DIST;
+      }
+
+      var radius = p.r + near * 2.4;
+      var nr = Math.round(110 + (54 - 110) * 0); // base
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
+
+      if (near > 0.05) {
+        ctx.fillStyle = "rgba(110,231,255," + (0.6 + near * 0.4) + ")";
+        ctx.shadowColor = "rgba(54,232,255,0.9)";
+        ctx.shadowBlur = 10 + near * 16;
+      } else {
+        ctx.fillStyle = "rgba(140,180,230,0.55)";
+        ctx.shadowBlur = 0;
+      }
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+  }
+
+  var rafId = null;
+  function loop() {
+    step();
+    rafId = requestAnimationFrame(loop);
+  }
+
+  // Pointer tracking
+  window.addEventListener("mousemove", function (e) {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+    mouse.active = true;
+  }, { passive: true });
+
+  window.addEventListener("mouseout", function () {
+    mouse.active = false;
+    mouse.x = -9999; mouse.y = -9999;
+  });
+
+  window.addEventListener("touchmove", function (e) {
+    if (e.touches && e.touches[0]) {
+      mouse.x = e.touches[0].clientX;
+      mouse.y = e.touches[0].clientY;
+      mouse.active = true;
+    }
+  }, { passive: true });
+  window.addEventListener("touchend", function () { mouse.active = false; });
+
+  var resizeTO;
+  window.addEventListener("resize", function () {
+    clearTimeout(resizeTO);
+    resizeTO = setTimeout(resize, 150);
+  });
+
+  // Pause animation when tab not visible (perf)
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden) {
+      if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+    } else if (!reduceMotion && !rafId) {
+      loop();
+    }
+  });
+
+  resize();
+
+  if (reduceMotion) {
+    // Render a single static frame; no continuous animation.
+    step();
+  } else {
+    loop();
+  }
+})();
+</script>
+</body>
+</html>

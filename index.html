@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>inswave — Hero 진입화면 비교</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:"Inter",system-ui,sans-serif;
+    background:#0b0c10;color:#f4f4f6;
+    min-height:100vh;
+    padding:clamp(40px,6vw,90px) clamp(22px,5vw,72px);
+    -webkit-font-smoothing:antialiased;
+  }
+  header{max-width:1100px;margin:0 auto 48px}
+  .logo{font-family:"Space Grotesk";font-weight:700;font-size:22px;display:inline-flex;align-items:center;gap:9px}
+  .logo .dot{width:9px;height:9px;border-radius:50%;background:#6ce0ff;box-shadow:0 0 14px #6ce0ff}
+  h1{font-family:"Space Grotesk";font-weight:700;font-size:clamp(2rem,4vw,3.2rem);letter-spacing:-.03em;margin:26px 0 12px;line-height:1.05}
+  .lede{color:#a9aab2;font-size:1.05rem;max-width:60ch;line-height:1.6}
+  .grid{
+    max-width:1100px;margin:0 auto;
+    display:grid;gap:24px;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  }
+  .card{
+    display:flex;flex-direction:column;
+    border:1px solid rgba(255,255,255,.1);border-radius:18px;
+    overflow:hidden;text-decoration:none;color:inherit;
+    background:#121319;
+    transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease;
+  }
+  .card:hover{transform:translateY(-4px);border-color:rgba(255,255,255,.25);box-shadow:0 18px 50px rgba(0,0,0,.5)}
+  .swatch{height:150px;position:relative;overflow:hidden}
+  .s-aurora{background:radial-gradient(60% 80% at 30% 30%,rgba(108,224,255,.5),transparent 70%),radial-gradient(50% 70% at 80% 70%,rgba(70,110,255,.5),transparent 70%),#070b1a}
+  .s-flux{background:radial-gradient(60% 60% at 25% 35%,rgba(139,123,255,.45),transparent 70%),radial-gradient(50% 60% at 80% 70%,rgba(80,90,140,.4),transparent 70%),#0e0e10}
+  .s-prism{background:radial-gradient(60% 70% at 70% 40%,rgba(70,110,255,.35),transparent 70%),linear-gradient(135deg,#f6f7fb,#e7ebf7)}
+  .s-immersive{background:radial-gradient(70% 80% at 25% 30%,rgba(108,224,255,.4),transparent 60%),radial-gradient(60% 70% at 85% 75%,rgba(80,120,220,.35),transparent 62%),linear-gradient(160deg,#05060a,#0b1622)}
+  .body{padding:22px 22px 26px}
+  .tag{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#7d7f8a}
+  .name{font-family:"Space Grotesk";font-weight:700;font-size:1.35rem;margin:6px 0 8px}
+  .desc{color:#a9aab2;font-size:.95rem;line-height:1.55}
+  .meta{margin-top:16px;font-size:.82rem;color:#6ce0ff}
+  footer{max-width:1100px;margin:48px auto 0;color:#6b6d77;font-size:.85rem}
+  @media (prefers-reduced-motion:reduce){.card{transition:none}}
+</style>
+</head>
+<body>
+  <header>
+    <span class="logo"><span class="dot"></span>inswave</span>
+    <h1>진입 첫화면 비교</h1>
+    <p class="lede">2002년 국내 최초로 웹 표준 UI/UX 개발 플랫폼을 선보인 <strong>인스웨이브시스템즈</strong>. WebSquare AI와 생성형 AI 기반 UI 자동 생성을 앞세운 2026 상반기 트렌디 Hero 진입화면입니다. 무드와 인터랙션을 1:1로 페어링한 두 방향을 비교해 보세요.</p>
+  </header>
+
+  <div class="grid">
+    <a class="card" href="index-aurora.html">
+      <div class="swatch s-aurora"></div>
+      <div class="body">
+        <span class="tag">A · 다크 + 네온</span>
+        <div class="name">Aurora</div>
+        <p class="desc">딥 네이비 + 시안·일렉트릭 블루 발광. 마우스에 반응하는 파티클 네트워크로 AI·데이터·연결을 상징.</p>
+        <div class="meta">Canvas 2D · 무의존</div>
+      </div>
+    </a>
+
+    <a class="card" href="index-prism.html">
+      <div class="swatch s-prism"></div>
+      <div class="body">
+        <span class="tag">B · 라이트 + 클린</span>
+        <div class="name">Prism</div>
+        <p class="desc">오프화이트 + 블루. 마우스에 반응해 회전하는 와이어프레임 결정체. 밝고 신뢰감 있는 금융권 친화.</p>
+        <div class="meta">Three.js (CDN)</div>
+      </div>
+    </a>
+
+    <a class="card" href="index-immersive.html">
+      <div class="swatch s-immersive"></div>
+      <div class="body">
+        <span class="tag">C · 스크롤 내러티브</span>
+        <div class="name">Immersive</div>
+        <p class="desc">hubtown.co.in 패턴 기반. 0→100% 로더 진입, 풀스크린 섹션을 스크롤로 넘기는 시네마틱 스토리텔링 + 카운터.</p>
+        <div class="meta">스크롤 인터랙션 · 무의존</div>
+      </div>
+    </a>
+  </div>
+
+  <footer>inswave · 2026 상반기 웹 PC 진입화면 프로토타입 — Hero(Above the fold) only</footer>
+</body>
+</html>

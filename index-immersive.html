@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>inswave — AI 혁신의 물결</title>
+<meta name="description" content="2002년 국내 최초 웹 표준 UI/UX 개발 플랫폼 전문기업. WebSquare AI와 생성형 AI 기반 UI 자동 생성." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+<!-- fullPage.js v4 (vanilla) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullpage.js@4/dist/fullpage.min.css" />
+<style>
+  :root{
+    --ink:#f3f4f7;
+    --ink-soft:#9aa0ad;
+    --line:rgba(255,255,255,.14);
+    --accent:#6ce0ff;
+    --bg:#06070b;
+    --ease:cubic-bezier(.16,1,.3,1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  a{color:inherit;text-decoration:none}
+
+  /* ============ LOADER ============ */
+  #loader{
+    position:fixed;inset:0;z-index:1000;
+    background:var(--bg);
+    display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:26px;
+    transition:opacity .8s var(--ease), visibility .8s var(--ease);
+  }
+  #loader.done{opacity:0;visibility:hidden}
+  .load-brand{
+    font-family:"Space Grotesk";font-weight:700;font-size:18px;letter-spacing:.02em;
+    display:flex;align-items:center;gap:10px;color:var(--ink);
+  }
+  .load-brand .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 16px var(--accent)}
+  .load-num{
+    font-family:"Space Grotesk";font-weight:700;
+    font-size:clamp(3rem,12vw,9rem);letter-spacing:-.04em;line-height:1;
+    color:var(--ink);
+  }
+  .load-bar{width:min(280px,60vw);height:2px;background:rgba(255,255,255,.12);overflow:hidden}
+  .load-bar > i{display:block;height:100%;width:0;background:var(--accent);box-shadow:0 0 12px var(--accent)}
+  .load-label{font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-soft)}
+
+  /* ============ NAV ============ */
+  header.nav{
+    position:fixed;top:0;left:0;right:0;z-index:200;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:22px clamp(20px,4vw,56px);
+    transition:background .4s var(--ease), padding .4s var(--ease), border-color .4s var(--ease);
+    border-bottom:1px solid transparent;
+  }
+  header.nav.solid{
+    background:rgba(6,7,11,.72);
+    backdrop-filter:blur(14px);
+    padding:14px clamp(20px,4vw,56px);
+    border-bottom:1px solid var(--line);
+  }
+  .brand{font-family:"Space Grotesk";font-weight:700;font-size:20px;display:flex;align-items:center;gap:10px}
+  .brand .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 14px var(--accent)}
+  .nav-menu{display:flex;gap:clamp(16px,2.2vw,34px);list-style:none}
+  .nav-menu a{font-size:14px;font-weight:500;color:var(--ink-soft);transition:color .25s}
+  .nav-menu a:hover{color:var(--ink)}
+  .nav-actions{display:flex;align-items:center;gap:18px}
+  .nav-login{font-size:14px;color:var(--ink-soft);transition:color .25s}
+  .nav-login:hover{color:var(--ink)}
+  .nav-cta{
+    font-size:13.5px;font-weight:600;color:#05121a;
+    background:var(--accent);padding:10px 20px;border-radius:999px;
+    transition:transform .2s var(--ease),box-shadow .25s;
+  }
+  .nav-cta:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(108,224,255,.35)}
+
+  /* ============ SECTIONS ============ */
+  .panel{
+    position:relative;
+    display:flex;align-items:center;
+    padding:clamp(90px,12vh,140px) clamp(20px,6vw,90px);
+    overflow:hidden;
+  }
+  /* cinematic background built from layered gradients (placeholder for full-bleed imagery) */
+  .panel .bg{
+    position:absolute;inset:0;z-index:0;
+    transform:scale(1.06);
+    background:
+      radial-gradient(70% 80% at var(--bx,25%) 30%, hsla(var(--h),70%,55%,.40), transparent 60%),
+      radial-gradient(60% 70% at 85% 75%, hsla(calc(var(--h) + 40),70%,45%,.32), transparent 62%),
+      linear-gradient(160deg,#05060a 10%, hsla(var(--h),40%,10%,1) 120%);
+  }
+  .panel .grain{
+    position:absolute;inset:0;z-index:1;pointer-events:none;opacity:.5;
+    background:radial-gradient(120% 90% at 50% 50%, transparent 40%, rgba(0,0,0,.55) 100%);
+  }
+  .panel .inner{position:relative;z-index:2;max-width:1100px;width:100%}
+
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:10px;
+    font-size:12.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-soft);
+    margin-bottom:clamp(18px,3vw,30px);
+  }
+  .eyebrow .idx{color:var(--accent);font-family:"Space Grotesk";font-weight:700}
+  .eyebrow .ln{width:42px;height:1px;background:var(--line)}
+
+  .statement{
+    font-family:"Space Grotesk";font-weight:700;
+    font-size:clamp(2.3rem,7vw,6rem);
+    line-height:1.04;letter-spacing:-.035em;
+    max-width:16ch;
+  }
+  .statement .grad{
+    background:linear-gradient(100deg,var(--accent),#bdecff 70%,#fff);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .lead{
+    margin-top:clamp(20px,3vw,30px);
+    font-size:clamp(1rem,1.4vw,1.2rem);line-height:1.65;color:var(--ink-soft);
+    max-width:52ch;
+  }
+  .panel .cta{
+    margin-top:clamp(28px,4vw,42px);
+    display:inline-flex;align-items:center;gap:10px;
+    font-size:15px;font-weight:600;color:var(--ink);
+    padding:14px 26px;border:1px solid var(--line);border-radius:999px;
+    background:rgba(255,255,255,.03);
+    transition:border-color .25s,background .25s,transform .2s var(--ease);
+  }
+  .panel .cta:hover{border-color:var(--accent);background:rgba(108,224,255,.08);transform:translateY(-2px)}
+  .panel .cta .arrow{transition:transform .2s var(--ease)}
+  .panel .cta:hover .arrow{transform:translateX(4px)}
+
+  /* reveal */
+  .rv{opacity:0;transform:translateY(40px);transition:opacity 1s var(--ease),transform 1s var(--ease)}
+  .rv.in{opacity:1;transform:none}
+  .rv.d1{transition-delay:.08s}
+  .rv.d2{transition-delay:.2s}
+  .rv.d3{transition-delay:.32s}
+
+  /* ============ STATS PANEL ============ */
+  .stats{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(20px,3vw,50px);
+    width:100%;max-width:1100px;
+  }
+  .stat .v{font-family:"Space Grotesk";font-weight:700;font-size:clamp(2.4rem,5.5vw,4.6rem);letter-spacing:-.03em;line-height:1}
+  .stat .v .suffix{color:var(--accent);font-size:.5em;vertical-align:.35em;margin-left:.1em}
+  .stat .k{margin-top:12px;font-size:14px;color:var(--ink-soft);letter-spacing:.02em}
+  .stat{padding-top:22px;border-top:1px solid var(--line)}
+
+  /* ============ FOOTER / FINAL ============ */
+  .final .statement{max-width:20ch}
+  footer.foot{
+    border-top:1px solid var(--line);
+    padding:clamp(40px,6vw,70px) clamp(20px,6vw,90px) 40px;
+    display:flex;flex-wrap:wrap;gap:24px;justify-content:space-between;align-items:center;
+    background:#04050a;
+  }
+  .foot .brand{font-size:18px}
+  .foot .copy{font-size:13px;color:var(--ink-soft);max-width:46ch;line-height:1.6;margin-top:8px}
+  .foot .links{display:flex;gap:22px;flex-wrap:wrap}
+  .foot .links a{font-size:14px;color:var(--ink-soft);transition:color .25s}
+  .foot .links a:hover{color:var(--ink)}
+
+  /* ============ FLOATING CHAT ============ */
+  .chat{
+    position:fixed;right:clamp(18px,3vw,34px);bottom:clamp(18px,3vw,34px);z-index:160;
+    display:inline-flex;align-items:center;gap:10px;
+    background:var(--accent);color:#05121a;font-weight:600;font-size:14px;
+    padding:13px 20px;border-radius:999px;
+    box-shadow:0 14px 40px rgba(108,224,255,.4);
+    transition:transform .2s var(--ease),box-shadow .25s;
+  }
+  .chat:hover{transform:translateY(-3px);box-shadow:0 18px 50px rgba(108,224,255,.55)}
+  .chat .ping{width:9px;height:9px;border-radius:50%;background:#05121a;position:relative}
+  .chat .ping::after{content:"";position:absolute;inset:0;border-radius:50%;background:#05121a;animation:ping 1.8s var(--ease) infinite}
+  @keyframes ping{0%{transform:scale(1);opacity:.7}100%{transform:scale(3.2);opacity:0}}
+
+  /* ============ fullPage.js nav dots ============ */
+  #fp-nav ul li a span,
+  .fp-slidesNav ul li a span{background:var(--ink-soft)}
+  #fp-nav ul li a.active span,
+  #fp-nav ul li:hover a.active span{background:var(--accent);box-shadow:0 0 12px var(--accent)}
+  #fp-nav ul li a span{transition:background .3s var(--ease)}
+  #fp-nav ul li .fp-tooltip{font-family:"Inter";color:var(--ink-soft)}
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width:880px){
+    .nav-menu,.nav-login{display:none}
+    .stats{grid-template-columns:repeat(2,1fr);gap:28px}
+    .panel{min-height:100vh}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important}
+    .rv{opacity:1;transform:none;transition:none}
+    .chat .ping::after{display:none}
+    #loader{transition:none}
+  }
+</style>
+</head>
+<body>
+
+  <!-- ============ LOADER ============ -->
+  <div id="loader" aria-hidden="true">
+    <div class="load-brand"><span class="dot"></span>inswave</div>
+    <div class="load-num"><span id="loadNum">0</span></div>
+    <div class="load-bar"><i id="loadBar"></i></div>
+    <div class="load-label">AI 혁신의 물결</div>
+  </div>
+
+  <!-- ============ NAV ============ -->
+  <header class="nav" id="nav">
+    <a class="brand" href="#s1"><span class="dot"></span>inswave</a>
+    <ul class="nav-menu">
+      <li><a href="#s2">제품</a></li>
+      <li><a href="#s3">WebSquare AI</a></li>
+      <li><a href="#s4">도입사례</a></li>
+      <li><a href="#s5">회사소개</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a class="nav-login" href="#">로그인</a>
+      <a class="nav-cta" href="#contact">도입 문의</a>
+    </div>
+  </header>
+
+  <!-- ============ FULLPAGE WRAPPER ============ -->
+  <div id="fullpage">
+
+    <!-- 1 · HERO -->
+    <section class="panel section" data-anchor="s1" style="--h:200">
+      <div class="bg" aria-hidden="true"></div>
+      <div class="grain" aria-hidden="true"></div>
+      <div class="inner">
+        <span class="eyebrow rv"><span class="idx">01</span><span class="ln"></span>AI 혁신의 물결</span>
+        <h1 class="statement rv d1">엔터프라이즈 UI의 <span class="grad">미래를 만듭니다.</span></h1>
+        <p class="lead rv d2">2002년 국내 최초로 웹 표준 UI/UX 개발 플랫폼을 선보인 인스웨이브시스템즈. 금융·공공·기업의 화면을 더 빠르고, 더 똑똑하게.</p>
+        <a class="cta rv d3" href="#s2">프로젝트 둘러보기 <span class="arrow">→</span></a>
+      </div>
+    </section>
+
+    <!-- 2 · INNOVATION -->
+    <section class="panel section" data-anchor="s2" style="--h:265;--bx:70%">
+      <div class="bg" aria-hidden="true"></div>
+      <div class="grain" aria-hidden="true"></div>
+      <div class="inner">
+        <span class="eyebrow rv"><span class="idx">02</span><span class="ln"></span>Innovation</span>
+        <h2 class="statement rv d1">개발의 방식을 <span class="grad">새로 정의합니다.</span></h2>
+        <p class="lead rv d2">생성형 AI 기반 UI 자동 생성으로 화면 설계부터 코드까지. 반복은 줄이고, 완성도는 높이는 차세대 개발 경험을 제시합니다.</p>
+        <a class="cta rv d3" href="#s3">WebSquare AI 알아보기 <span class="arrow">→</span></a>
+      </div>
+    </section>
+
+    <!-- 3 · PLATFORM -->
+    <section class="panel section" data-anchor="s3" style="--h:155;--bx:30%">
+      <div class="bg" aria-hidden="true"></div>
+      <div class="grain" aria-hidden="true"></div>
+      <div class="inner">
+        <span class="eyebrow rv"><span class="idx">03</span><span class="ln"></span>Platform</span>
+        <h2 class="statement rv d1">하나의 플랫폼으로 <span class="grad">모든 화면을.</span></h2>
+        <p class="lead rv d2">WebSquare AI, ProWorks5, W-Matrix, WebTop까지 — 웹·앱·금융 단말을 아우르는 통합 UI/UX 플랫폼으로 전 채널을 일관되게 구축합니다.</p>
+        <a class="cta rv d3" href="#s4">제품군 보기 <span class="arrow">→</span></a>
+      </div>
+    </section>
+
+    <!-- 4 · STATS -->
+    <section class="panel section" data-anchor="s4" style="--h:225;--bx:50%">
+      <div class="bg" aria-hidden="true"></div>
+      <div class="grain" aria-hidden="true"></div>
+      <div class="inner">
+        <span class="eyebrow rv"><span class="idx">04</span><span class="ln"></span>By the numbers</span>
+        <div class="stats">
+          <div class="stat rv d1"><div class="v" data-plain="1">2002</div><div class="k">설립 · 국내 최초 웹 표준 UI/UX 플랫폼</div></div>
+          <div class="stat rv d1"><div class="v" data-count="387"><span class="num">0</span><span class="suffix">+</span></div><div class="k">임직원 (2025)</div></div>
+          <div class="stat rv d2"><div class="v" data-count="20"><span class="num">0</span><span class="suffix">년+</span></div><div class="k">엔터프라이즈 UI/UX 전문성</div></div>
+          <div class="stat rv d2"><div class="v" data-plain="1" style="font-size:clamp(1.7rem,3.6vw,3rem)">KOSDAQ</div><div class="k">코스닥 상장 · 450520</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 · PURPOSE / FINAL -->
+    <section class="panel section final" data-anchor="s5" style="--h:25;--bx:60%">
+      <div class="bg" aria-hidden="true"></div>
+      <div class="grain" aria-hidden="true"></div>
+      <div class="inner">
+        <span class="eyebrow rv"><span class="idx">05</span><span class="ln"></span>Together</span>
+        <h2 class="statement rv d1">내일의 디지털을 <span class="grad">함께 설계합니다.</span></h2>
+        <p class="lead rv d2">금융과 공공, 그리고 기업의 디지털 전환 — 그 화면 너머의 혁신을 인스웨이브시스템즈가 함께합니다.</p>
+        <a class="cta rv d3" href="#contact">도입 문의하기 <span class="arrow">→</span></a>
+      </div>
+    </section>
+
+    <!-- FOOTER (auto-height section) -->
+    <section class="section fp-auto-height" data-anchor="contact">
+      <footer class="foot">
+        <div>
+          <div class="brand"><span class="dot"></span>inswave</div>
+          <p class="copy">인스웨이브시스템즈 · 2002년 국내 최초 웹 표준 UI/UX 개발 플랫폼 전문기업. 생성형 AI 기반 UI 자동 생성 WebSquare AI.</p>
+        </div>
+        <div class="links">
+          <a href="#s2">제품</a>
+          <a href="#s3">WebSquare AI</a>
+          <a href="#s4">도입사례</a>
+          <a href="#s5">회사소개</a>
+        </div>
+      </footer>
+    </section>
+
+  </div><!-- /#fullpage -->
+
+  <!-- ============ FLOATING CHAT ============ -->
+  <a class="chat" href="#contact" aria-label="상담 문의"><span class="ping"></span>상담 문의</a>
+
+  <!-- fullPage.js v4 -->
+  <script src="https://cdn.jsdelivr.net/npm/fullpage.js@4/dist/fullpage.min.js"></script>
+  <script>
+  (function(){
+    "use strict";
+    var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    /* ---------- Reveal helper ---------- */
+    function revealSection(sectionEl){
+      if(!sectionEl) return;
+      var revs = sectionEl.querySelectorAll(".rv");
+      for(var i=0;i<revs.length;i++){ revs[i].classList.add("in"); }
+      if(sectionEl.getAttribute("data-anchor") === "s4"){ runCounters(); }
+    }
+
+    /* ---------- Animated counters ---------- */
+    var counted = false;
+    function runCounters(){
+      if(counted) return; counted = true;
+      var els = document.querySelectorAll(".stat .v[data-count]");
+      els.forEach(function(el){
+        var target = parseInt(el.getAttribute("data-count"), 10);
+        var span = el.querySelector(".num");
+        if(!span) return;
+        if(reduce){ span.textContent = target; return; }
+        var cur = 0, step = Math.max(1, Math.round(target/45));
+        var run = function(){
+          cur += step;
+          if(cur >= target){ span.textContent = target; }
+          else { span.textContent = cur; requestAnimationFrame(run); }
+        };
+        run();
+      });
+    }
+
+    /* ---------- Nav solidify (fullPage afterLoad + fallback) ---------- */
+    var nav = document.getElementById("nav");
+    function setSolid(idx){
+      if(idx > 0) nav.classList.add("solid");
+      else nav.classList.remove("solid");
+    }
+
+    /* ---------- Init fullPage after loader ---------- */
+    function initFullpage(){
+      if(typeof fullpage === "undefined"){
+        // CDN failed: fall back to native scroll so content is still usable
+        document.getElementById("fullpage").style.overflow = "visible";
+        var secs = document.querySelectorAll(".section");
+        secs.forEach(function(s){ s.style.minHeight = "100vh"; revealSection(s); });
+        return;
+      }
+
+      new fullpage('#fullpage', {
+        licenseKey: 'gplv3-license',
+        anchors: ['s1','s2','s3','s4','s5','contact'],
+        navigation: true,
+        navigationPosition: 'right',
+        showActiveTooltip: false,
+        autoScrolling: !reduce,
+        fitToSection: !reduce,
+        scrollingSpeed: 850,
+        easingcss3: 'cubic-bezier(.16,1,.3,1)',
+        verticalCentered: false,
+        responsiveWidth: 880,
+        normalScrollElements: 'footer.foot',
+        afterRender: function(){
+          // reveal the first visible section
+          var active = document.querySelector('.section.active') || document.querySelector('.section');
+          revealSection(active);
+          setSolid(0);
+        },
+        afterLoad: function(origin, destination){
+          revealSection(destination.item);
+          setSolid(destination.index);
+        },
+        afterResponsive: function(isResponsive){
+          if(isResponsive){
+            // native scroll mode: reveal everything so nothing stays hidden
+            document.querySelectorAll(".section").forEach(revealSection);
+          }
+        }
+      });
+
+      // In reduced-motion (autoScrolling:false) reveal all up front
+      if(reduce){
+        document.querySelectorAll(".section").forEach(revealSection);
+      }
+    }
+
+    /* ---------- Loader ---------- */
+    var loader = document.getElementById("loader");
+    var numEl = document.getElementById("loadNum");
+    var barEl = document.getElementById("loadBar");
+
+    function finishLoad(){
+      loader.classList.add("done");
+      initFullpage();
+    }
+
+    if(reduce){
+      numEl.textContent = "100";
+      barEl.style.width = "100%";
+      setTimeout(finishLoad, 200);
+    } else {
+      var n = 0;
+      var tick = function(){
+        n += Math.max(1, Math.round((100 - n) * 0.08));
+        if(n >= 100){ n = 100; }
+        numEl.textContent = n;
+        barEl.style.width = n + "%";
+        if(n < 100){ setTimeout(tick, 22); }
+        else { setTimeout(finishLoad, 380); }
+      };
+      setTimeout(tick, 250);
+    }
+  })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>inswave — AI 혁신의 물결</title>
+<meta name="description" content="2002년 국내 최초 웹 표준 UI/UX 개발 플랫폼 전문기업. WebSquare AI와 생성형 AI 기반 UI 자동 생성." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;450;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #f6f7fb;
+    --bg-2: #eef1f8;
+    --ink: #0b1020;
+    --ink-soft: #4a5169;
+    --ink-faint: #8a91a8;
+    --line: #e2e6f0;
+    --blue: #2b6bff;
+    --blue-deep: #1546c9;
+    --blue-soft: #eaf0ff;
+    --accent-grad: linear-gradient(110deg, #2b6bff 0%, #6aa2ff 55%, #7c5cff 100%);
+    --shadow-sm: 0 1px 2px rgba(16, 24, 48, .06), 0 4px 16px rgba(16, 24, 48, .05);
+    --shadow-cta: 0 8px 24px rgba(43, 107, 255, .28);
+    --radius: 14px;
+    --maxw: 1320px;
+    --ease: cubic-bezier(.22, 1, .36, 1);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body { height: 100%; }
+
+  body {
+    margin: 0;
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow: hidden;
+  }
+
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; cursor: pointer; }
+
+  /* Visible focus for keyboard users */
+  a:focus-visible,
+  button:focus-visible {
+    outline: 2px solid var(--blue);
+    outline-offset: 3px;
+    border-radius: 8px;
+  }
+
+  .stage {
+    position: relative;
+    height: 100vh;
+    height: 100dvh;
+    min-height: 640px;
+    width: 100%;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  /* ===== Ambient background ===== */
+  .bg-wash {
+    position: absolute; inset: 0;
+    z-index: 0;
+    background:
+      radial-gradient(900px 600px at 78% 28%, rgba(124, 92, 255, .12), transparent 60%),
+      radial-gradient(1100px 700px at 88% 60%, rgba(43, 107, 255, .14), transparent 62%),
+      radial-gradient(700px 600px at 8% 90%, rgba(106, 162, 255, .10), transparent 60%),
+      linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 100%);
+  }
+  .bg-grid {
+    position: absolute; inset: 0;
+    z-index: 0;
+    background-image:
+      linear-gradient(to right, rgba(11, 16, 32, .035) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(11, 16, 32, .035) 1px, transparent 1px);
+    background-size: 64px 64px;
+    -webkit-mask-image: radial-gradient(120% 100% at 70% 30%, #000 35%, transparent 80%);
+            mask-image: radial-gradient(120% 100% at 70% 30%, #000 35%, transparent 80%);
+  }
+
+  /* ===== 3D canvas ===== */
+  #scene {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* ===== Layout shell ===== */
+  .shell {
+    position: relative;
+    z-index: 3;
+    height: 100%;
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: 0 clamp(20px, 4vw, 64px);
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    pointer-events: none;
+  }
+  .shell a, .shell button { pointer-events: auto; }
+
+  /* ===== Nav ===== */
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding-top: clamp(20px, 3vh, 34px);
+  }
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: "Space Grotesk", sans-serif;
+    font-weight: 700;
+    font-size: 1.25rem;
+    letter-spacing: -.02em;
+    color: var(--ink);
+  }
+  .logo .dot {
+    width: 11px; height: 11px;
+    border-radius: 50%;
+    background: var(--accent-grad);
+    box-shadow: 0 0 0 4px rgba(43, 107, 255, .12);
+  }
+  .menu {
+    display: flex;
+    align-items: center;
+    gap: clamp(18px, 2.4vw, 40px);
+  }
+  .menu a {
+    font-size: .94rem;
+    font-weight: 500;
+    color: var(--ink-soft);
+    position: relative;
+    padding: 6px 2px;
+    transition: color .25s var(--ease);
+  }
+  .menu a::after {
+    content: "";
+    position: absolute;
+    left: 0; bottom: 0;
+    width: 100%; height: 2px;
+    background: var(--accent-grad);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .35s var(--ease);
+  }
+  .menu a:hover { color: var(--ink); }
+  .menu a:hover::after { transform: scaleX(1); }
+
+  .nav-right { display: flex; align-items: center; gap: 18px; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    font-weight: 600;
+    font-size: .95rem;
+    line-height: 1;
+    border: 0;
+    border-radius: 11px;
+    padding: 13px 22px;
+    transition: transform .25s var(--ease), box-shadow .25s var(--ease), background .25s var(--ease), border-color .25s var(--ease);
+    white-space: nowrap;
+  }
+  .btn-primary {
+    color: #fff;
+    background: var(--blue);
+    box-shadow: var(--shadow-cta);
+  }
+  .btn-primary:hover { background: var(--blue-deep); transform: translateY(-2px); box-shadow: 0 12px 30px rgba(43,107,255,.34); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-primary .arrow { transition: transform .3s var(--ease); }
+  .btn-primary:hover .arrow { transform: translateX(4px); }
+
+  .btn-ghost {
+    color: var(--ink);
+    background: rgba(255,255,255,.6);
+    border: 1px solid var(--line);
+    backdrop-filter: blur(8px);
+    box-shadow: var(--shadow-sm);
+  }
+  .btn-ghost:hover { background: #fff; transform: translateY(-2px); border-color: #cfd6e6; }
+
+  .nav-cta { padding: 11px 20px; }
+
+  /* ===== Hero copy ===== */
+  .hero {
+    align-self: center;
+    max-width: 720px;
+    padding-bottom: 2vh;
+  }
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    font-size: .8rem;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--blue-deep);
+    background: var(--blue-soft);
+    border: 1px solid rgba(43,107,255,.16);
+    padding: 7px 14px;
+    border-radius: 100px;
+    margin-bottom: clamp(20px, 3vh, 30px);
+  }
+  .eyebrow .pulse {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--blue);
+    box-shadow: 0 0 0 0 rgba(43,107,255,.55);
+    animation: pulse 2.4s infinite var(--ease);
+  }
+  @keyframes pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(43,107,255,.5); }
+    70%  { box-shadow: 0 0 0 8px rgba(43,107,255,0); }
+    100% { box-shadow: 0 0 0 0 rgba(43,107,255,0); }
+  }
+
+  h1 {
+    font-family: "Space Grotesk", sans-serif;
+    font-weight: 700;
+    font-size: clamp(2.7rem, 6.4vw, 5.6rem);
+    line-height: .98;
+    letter-spacing: -.035em;
+    margin: 0 0 clamp(18px, 2.6vh, 28px);
+    color: var(--ink);
+  }
+  h1 .grad {
+    background: var(--accent-grad);
+    -webkit-background-clip: text;
+            background-clip: text;
+    color: transparent;
+  }
+  .sub {
+    font-size: clamp(1.05rem, 1.5vw, 1.32rem);
+    line-height: 1.5;
+    color: var(--ink-soft);
+    max-width: 30ch;
+    margin: 0 0 clamp(28px, 4vh, 42px);
+  }
+  .cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+  }
+  .btn-lg { padding: 16px 28px; font-size: 1rem; }
+
+  /* ===== Scroll indicator ===== */
+  .scroll {
+    justify-self: center;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: clamp(18px, 3vh, 30px);
+    color: var(--ink-faint);
+    font-size: .72rem;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    pointer-events: auto;
+  }
+  .mouse {
+    width: 24px; height: 38px;
+    border: 2px solid var(--ink-faint);
+    border-radius: 14px;
+    position: relative;
+  }
+  .mouse::before {
+    content: "";
+    position: absolute;
+    left: 50%; top: 7px;
+    width: 4px; height: 7px;
+    margin-left: -2px;
+    border-radius: 4px;
+    background: var(--blue);
+    animation: wheel 1.8s infinite var(--ease);
+  }
+  @keyframes wheel {
+    0%   { opacity: 0; transform: translateY(0); }
+    30%  { opacity: 1; }
+    70%  { opacity: 1; transform: translateY(12px); }
+    100% { opacity: 0; transform: translateY(14px); }
+  }
+
+  /* ===== Entrance animation ===== */
+  .reveal {
+    opacity: 0;
+    transform: translateY(22px);
+    transition: opacity .9s var(--ease), transform .9s var(--ease);
+  }
+  .reveal.in { opacity: 1; transform: none; }
+
+  /* small floating stat card, premium detail */
+  .badge {
+    position: absolute;
+    z-index: 3;
+    right: clamp(20px, 4vw, 64px);
+    bottom: clamp(80px, 14vh, 140px);
+    background: rgba(255,255,255,.72);
+    border: 1px solid var(--line);
+    backdrop-filter: blur(12px);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    box-shadow: var(--shadow-sm);
+    pointer-events: none;
+  }
+  .badge .v {
+    font-family: "Space Grotesk", sans-serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    letter-spacing: -.02em;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .badge .l {
+    font-size: .76rem;
+    color: var(--ink-faint);
+    margin-top: 6px;
+    letter-spacing: .02em;
+  }
+
+  @media (max-width: 880px) {
+    .menu { display: none; }
+    .badge { display: none; }
+    .hero { max-width: 100%; }
+    body { overflow: auto; }
+    .stage { height: auto; min-height: 100dvh; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .eyebrow .pulse, .mouse::before { animation: none; }
+    .reveal { transition: none; opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body>
+  <main class="stage">
+    <div class="bg-wash" aria-hidden="true"></div>
+    <div class="bg-grid" aria-hidden="true"></div>
+    <canvas id="scene" aria-hidden="true"></canvas>
+
+    <div class="shell">
+      <!-- NAV -->
+      <nav class="reveal" style="transition-delay:.05s">
+        <a class="logo" href="#" aria-label="inswave 홈">
+          <span class="dot" aria-hidden="true"></span> inswave
+        </a>
+        <div class="menu">
+          <a href="#">제품</a>
+          <a href="#">WebSquare AI</a>
+          <a href="#">도입사례</a>
+          <a href="#">회사소개</a>
+        </div>
+        <div class="nav-right">
+          <button class="btn btn-primary nav-cta" type="button">문의하기</button>
+        </div>
+      </nav>
+
+      <!-- HERO -->
+      <section class="hero">
+        <span class="eyebrow reveal" style="transition-delay:.15s">
+          <span class="pulse" aria-hidden="true"></span> AI 혁신의 물결
+        </span>
+        <h1 class="reveal" style="transition-delay:.25s">
+          웹 표준 UI/UX를<br /><span class="grad">AI로 혁신하다.</span>
+        </h1>
+        <p class="sub reveal" style="transition-delay:.38s">
+          2002년 국내 최초로 웹 표준 UI/UX 개발 플랫폼을 선보인 인스웨이브시스템즈. WebSquare AI와 생성형 AI 기반 UI 자동 생성으로 금융·공공·기업의 디지털 혁신을 이끕니다.
+        </p>
+        <div class="cta-row reveal" style="transition-delay:.5s">
+          <button class="btn btn-primary btn-lg" type="button">
+            도입 문의 <span class="arrow" aria-hidden="true">→</span>
+          </button>
+          <button class="btn btn-ghost btn-lg" type="button">제품 살펴보기</button>
+        </div>
+      </section>
+
+      <!-- SCROLL INDICATOR -->
+      <a class="scroll reveal" href="#" style="transition-delay:.7s" aria-label="Scroll down">
+        <span class="mouse" aria-hidden="true"></span>
+        스크롤
+      </a>
+    </div>
+
+    <div class="badge reveal" style="transition-delay:.62s" aria-hidden="true">
+      <div class="v">2002</div>
+      <div class="l">국내 최초 웹 표준 UI/UX 플랫폼</div>
+    </div>
+  </main>
+
+  <!-- Three.js UMD build (works from file://, no import map) -->
+  <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+  <script>
+  (function () {
+    "use strict";
+
+    // ---- Entrance animation ----
+    window.addEventListener("load", function () {
+      requestAnimationFrame(function () {
+        document.querySelectorAll(".reveal").forEach(function (el) {
+          el.classList.add("in");
+        });
+      });
+    });
+
+    var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    var canvas = document.getElementById("scene");
+
+    // ---- Graceful fallback ----
+    function fallback() {
+      canvas.style.display = "none";
+      var wash = document.querySelector(".bg-wash");
+      if (wash) {
+        wash.style.background =
+          "radial-gradient(800px 600px at 76% 34%, rgba(124,92,255,.18), transparent 60%)," +
+          "radial-gradient(1000px 700px at 90% 64%, rgba(43,107,255,.22), transparent 62%)," +
+          "linear-gradient(180deg, #f6f7fb 0%, #eef1f8 100%)";
+      }
+    }
+
+    if (typeof THREE === "undefined") { fallback(); return; }
+
+    var renderer, scene, camera, group, raf;
+    try {
+      renderer = new THREE.WebGLRenderer({
+        canvas: canvas,
+        antialias: true,
+        alpha: true,
+        powerPreference: "high-performance"
+      });
+    } catch (e) { fallback(); return; }
+
+    if (!renderer || !renderer.getContext()) { fallback(); return; }
+
+    var DPR = Math.min(window.devicePixelRatio || 1, 2);
+    renderer.setPixelRatio(DPR);
+    renderer.setClearColor(0x000000, 0);
+
+    scene = new THREE.Scene();
+
+    camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
+    camera.position.set(0, 0, 7.4);
+
+    group = new THREE.Group();
+    scene.add(group);
+
+    // ---- Faceted crystal geometry ----
+    var geo = new THREE.IcosahedronGeometry(2.0, 1);
+
+    // Soft blue glass-like fill
+    var fillMat = new THREE.MeshStandardMaterial({
+      color: 0x9cc0ff,
+      metalness: 0.35,
+      roughness: 0.18,
+      transparent: true,
+      opacity: 0.42,
+      flatShading: true
+    });
+    var crystal = new THREE.Mesh(geo, fillMat);
+    group.add(crystal);
+
+    // Wireframe overlay (crisp facet edges)
+    var edges = new THREE.EdgesGeometry(geo, 1);
+    var lineMat = new THREE.LineBasicMaterial({
+      color: 0x2b6bff,
+      transparent: true,
+      opacity: 0.55
+    });
+    var wire = new THREE.LineSegments(edges, lineMat);
+    group.add(wire);
+
+    // Inner core for depth
+    var coreGeo = new THREE.IcosahedronGeometry(0.95, 0);
+    var coreMat = new THREE.MeshStandardMaterial({
+      color: 0x7c5cff,
+      metalness: 0.6,
+      roughness: 0.25,
+      flatShading: true,
+      transparent: true,
+      opacity: 0.7
+    });
+    var core = new THREE.Mesh(coreGeo, coreMat);
+    group.add(core);
+
+    // Floating particles for ambience
+    var pCount = 90;
+    var pPos = new Float32Array(pCount * 3);
+    for (var i = 0; i < pCount; i++) {
+      var r = 3.2 + Math.random() * 2.6;
+      var th = Math.random() * Math.PI * 2;
+      var ph = Math.acos(2 * Math.random() - 1);
+      pPos[i*3]   = r * Math.sin(ph) * Math.cos(th);
+      pPos[i*3+1] = r * Math.sin(ph) * Math.sin(th);
+      pPos[i*3+2] = r * Math.cos(ph);
+    }
+    var pGeo = new THREE.BufferGeometry();
+    pGeo.setAttribute("position", new THREE.BufferAttribute(pPos, 3));
+    var pMat = new THREE.PointsMaterial({
+      color: 0x2b6bff,
+      size: 0.045,
+      transparent: true,
+      opacity: 0.5,
+      sizeAttenuation: true
+    });
+    var particles = new THREE.Points(pGeo, pMat);
+    scene.add(particles);
+
+    // ---- Lighting (bright, clean) ----
+    scene.add(new THREE.AmbientLight(0xffffff, 0.75));
+    var key = new THREE.DirectionalLight(0xffffff, 1.6);
+    key.position.set(5, 6, 5);
+    scene.add(key);
+    var rim = new THREE.DirectionalLight(0x7c5cff, 1.1);
+    rim.position.set(-6, -3, 2);
+    scene.add(rim);
+    var fill = new THREE.PointLight(0x2b6bff, 1.2, 30);
+    fill.position.set(-3, 4, 6);
+    scene.add(fill);
+
+    // ---- Position group to the right of layout ----
+    function layoutGroup() {
+      var wide = window.innerWidth > 1024;
+      var mid = window.innerWidth > 880;
+      group.position.x = wide ? 3.0 : (mid ? 2.0 : 0);
+      group.position.y = mid ? 0.2 : 0;
+      particles.position.copy(group.position);
+      var scale = mid ? 1 : 0.78;
+      group.scale.setScalar(scale);
+    }
+
+    // ---- Resize ----
+    function resize() {
+      var w = canvas.clientWidth || window.innerWidth;
+      var h = canvas.clientHeight || window.innerHeight;
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      layoutGroup();
+    }
+    window.addEventListener("resize", resize);
+    resize();
+
+    // ---- Mouse parallax ----
+    var targetX = 0, targetY = 0, curX = 0, curY = 0;
+    if (!reduceMotion) {
+      window.addEventListener("pointermove", function (e) {
+        targetX = (e.clientX / window.innerWidth - 0.5) * 2;
+        targetY = (e.clientY / window.innerHeight - 0.5) * 2;
+      }, { passive: true });
+    }
+
+    // ---- Animation loop ----
+    var t0 = performance.now();
+    function animate(now) {
+      raf = requestAnimationFrame(animate);
+      var dt = (now - t0) / 1000; t0 = now;
+
+      // Smooth follow
+      curX += (targetX - curX) * 0.06;
+      curY += (targetY - curY) * 0.06;
+
+      if (!reduceMotion) {
+        group.rotation.y += dt * 0.22;
+        group.rotation.x += dt * 0.06;
+        core.rotation.y -= dt * 0.5;
+        core.rotation.x += dt * 0.28;
+        particles.rotation.y += dt * 0.04;
+      }
+
+      // Parallax: shift group + particles toward cursor (additive on top of auto-rotate)
+      var baseX = (window.innerWidth > 1024) ? 3.0 : (window.innerWidth > 880 ? 2.0 : 0);
+      var baseY = (window.innerWidth > 880) ? 0.2 : 0;
+      group.position.x += ((baseX + curX * 0.4) - group.position.x) * 0.05;
+      group.position.y += ((baseY - curY * 0.4) - group.position.y) * 0.05;
+      particles.position.x = group.position.x;
+      particles.position.y = group.position.y;
+
+      camera.position.x += ( (curX * 0.4) - camera.position.x ) * 0.05;
+      camera.position.y += ( (-curY * 0.3) - camera.position.y ) * 0.05;
+      camera.lookAt(group.position.x * 0.4, group.position.y * 0.4, 0);
+
+      renderer.render(scene, camera);
+    }
+    raf = requestAnimationFrame(animate);
+
+    // Pause when tab hidden (perf)
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) { cancelAnimationFrame(raf); }
+      else { t0 = performance.now(); raf = requestAnimationFrame(animate); }
+    });
+  })();
+  </script>
+</body>
+</html>
