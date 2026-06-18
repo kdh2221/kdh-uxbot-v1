@@ -659,6 +659,9 @@
     var form = document.getElementById("uxbot-form");
     var input = document.getElementById("uxbot-input");
     var sendBtn = document.getElementById("uxbot-send");
+    var expandBtn = document.getElementById("uxbot-expand");
+    var backdrop = document.getElementById("uxbot-backdrop");
+    var expanded = false;
 
     var kb = window.UXBOT_KB;
     var history = [];
@@ -738,6 +741,25 @@
       });
     }
 
+    function fpScroll(allow){
+      if (window.fullpage_api) {
+        try { fullpage_api.setAllowScrolling(allow); fullpage_api.setKeyboardScrolling(allow); } catch (e) {}
+      }
+    }
+    function setExpanded(on){
+      expanded = on;
+      panel.classList.toggle("expanded", on);
+      backdrop.classList.toggle("show", on);
+      panel.setAttribute("aria-modal", on ? "true" : "false");
+      expandBtn.setAttribute("aria-label", on ? "원래 크기로 축소" : "가운데로 확장");
+      var ic = expandBtn.querySelector("i");
+      if (ic) ic.className = on
+        ? "fa-solid fa-down-left-and-up-right-to-center"
+        : "fa-solid fa-up-right-and-down-left-from-center";
+      fpScroll(!on);            // lock background scroll while modal is open
+      if (on && input) input.focus();
+    }
+
     function openPanel(){
       panel.classList.add("open");
       panel.setAttribute("aria-hidden", "false");
@@ -746,6 +768,7 @@
       input.focus();
     }
     function closePanel(){
+      if (expanded) setExpanded(false);
       panel.classList.remove("open");
       panel.setAttribute("aria-hidden", "true");
       toggle.setAttribute("aria-expanded", "false");
@@ -756,8 +779,23 @@
       if (panel.classList.contains("open")) closePanel(); else openPanel();
     });
     closeBtn.addEventListener("click", closePanel);
+    expandBtn.addEventListener("click", function(){ setExpanded(!expanded); });
+    backdrop.addEventListener("click", function(){ setExpanded(false); });
+
     document.addEventListener("keydown", function(e){
-      if (e.key === "Escape" && panel.classList.contains("open")) closePanel();
+      if (e.key !== "Escape" || !panel.classList.contains("open")) return;
+      if (expanded) setExpanded(false); else closePanel();
+    });
+
+    // focus trap — only while expanded (modal)
+    panel.addEventListener("keydown", function(e){
+      if (!expanded || e.key !== "Tab") return;
+      var sel = 'a[href],button:not([disabled]),input,textarea,select,[tabindex]:not([tabindex="-1"])';
+      var nodes = Array.prototype.slice.call(panel.querySelectorAll(sel)).filter(function(el){ return el.offsetParent !== null; });
+      if (!nodes.length) return;
+      var first = nodes[0], last = nodes[nodes.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
     });
     form.addEventListener("submit", function(e){
       e.preventDefault();
