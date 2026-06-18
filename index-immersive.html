@@ -169,20 +169,6 @@
   .foot .links a{font-size:14px;color:var(--ink-soft);transition:color .25s}
   .foot .links a:hover{color:var(--ink)}
 
-  /* ============ FLOATING CHAT ============ */
-  .chat{
-    position:fixed;right:clamp(18px,3vw,34px);bottom:clamp(18px,3vw,34px);z-index:160;
-    display:inline-flex;align-items:center;gap:10px;
-    background:var(--accent);color:#05121a;font-weight:600;font-size:14px;
-    padding:13px 20px;border-radius:999px;
-    box-shadow:0 14px 40px rgba(108,224,255,.4);
-    transition:transform .2s var(--ease),box-shadow .25s;
-  }
-  .chat:hover{transform:translateY(-3px);box-shadow:0 18px 50px rgba(108,224,255,.55)}
-  .chat .ping{width:9px;height:9px;border-radius:50%;background:#05121a;position:relative}
-  .chat .ping::after{content:"";position:absolute;inset:0;border-radius:50%;background:#05121a;animation:ping 1.8s var(--ease) infinite}
-  @keyframes ping{0%{transform:scale(1);opacity:.7}100%{transform:scale(3.2);opacity:0}}
-
   /* ============ fullPage.js nav dots ============ */
   #fp-nav ul li a span,
   .fp-slidesNav ul li a span{background:var(--ink-soft)}
@@ -201,7 +187,6 @@
   @media (prefers-reduced-motion:reduce){
     *{animation:none!important}
     .rv{opacity:1;transform:none;transition:none}
-    .chat .ping::after{display:none}
     #loader{transition:none}
   }
 
@@ -261,7 +246,7 @@
     flex:1;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:12px;
     color:var(--ink);font-size:14px;font-family:"Inter",sans-serif;padding:11px 14px;outline:none;
   }
-  #uxbot-input:focus-visible{border-color:var(--accent)}
+  #uxbot-input:focus-visible{border-color:var(--accent);outline:2px solid var(--accent);outline-offset:2px}
   #uxbot-send{
     background:var(--accent);color:#05121a;border:none;border-radius:12px;
     font-weight:600;font-size:14px;padding:0 16px;cursor:pointer;
@@ -274,7 +259,7 @@
 
   @media (prefers-reduced-motion:reduce){
     #uxbot-toggle .ping::after{display:none}
-    #uxbot-panel{transition:opacity .01s,visibility .01s}
+    #uxbot-panel{transition:opacity .01s,visibility .01s;transform:none}
     .uxbot-typing span{animation:none}
   }
 </style>
