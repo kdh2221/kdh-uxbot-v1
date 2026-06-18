@@ -318,6 +318,92 @@
   <!-- ============ FLOATING CHAT ============ -->
   <a class="chat" href="#contact" aria-label="상담 문의"><span class="ping"></span>상담 문의</a>
 
+  <!-- ============ UXBOT: knowledge base + intent matcher ============ -->
+  <script>
+  (function(){
+    "use strict";
+
+    window.UXBOT_KB = {
+      welcome: "안녕하세요! inswave UX 컨설팅팀 담당 챗봇이에요. 서비스 소개, 진행 절차, 기간·비용, 자주 묻는 질문까지 도와드릴게요. 무엇이 궁금하세요?",
+      quickReplies: [
+        "UX 컨설팅이 뭔가요?",
+        "진행 절차가 궁금해요",
+        "기간과 비용은 어떻게 되나요?",
+        "원격으로도 진행되나요?"
+      ],
+      fallback: "정확한 답변을 위해 담당 컨설턴트에게 연결해 드리는 게 좋겠어요. 상단의 '도입 문의' 또는 우측 하단 문의 버튼으로 남겨 주시면 빠르게 회신드릴게요.",
+      intents: [
+        {
+          id: "service",
+          keywords: ["뭐", "무엇", "소개", "서비스", "ux 컨설팅", "컨설팅이"],
+          answer: "inswave UX 컨설팅팀은 사용성 진단, UX 전략 수립, UI 설계, 디자인 시스템 구축까지 제품의 화면 경험 전반을 함께 설계합니다. 금융·공공·기업 서비스의 복잡한 화면을 더 쉽고 일관되게 만드는 데 강점이 있어요."
+        },
+        {
+          id: "process",
+          keywords: ["절차", "프로세스", "과정", "단계", "어떻게 진행", "진행 방식", "흐름"],
+          answer: "보통 다음 5단계로 진행돼요. ① 문의·범위 협의 → ② 사용성 진단/리서치 → ③ UX 전략·UI 설계 → ④ 프로토타입 검증 → ⑤ 산출물 핸드오프. 프로젝트 성격에 따라 단계는 조정될 수 있습니다."
+        },
+        {
+          id: "cost",
+          keywords: ["비용", "가격", "견적", "기간", "얼마", "예산", "기간은"],
+          answer: "기간과 비용은 범위에 따라 달라집니다. 소규모 진단형은 수 주, 설계까지 포함한 정규 프로젝트는 보통 1~3개월 범위예요. 정확한 견적은 화면 수·요구사항을 함께 검토해야 하니, '도입 문의'로 남겨 주시면 맞춤 견적을 드립니다."
+        },
+        {
+          id: "remote",
+          keywords: ["원격", "비대면", "온라인", "재택", "화상"],
+          answer: "네, 원격으로도 진행 가능합니다. 킥오프와 주요 리뷰는 화상으로, 산출물과 진행 현황은 온라인으로 공유드려요. 필요 시 오프라인 워크숍도 병행합니다."
+        },
+        {
+          id: "deliverable",
+          keywords: ["산출물", "결과물", "납품", "무엇을 받", "받게"],
+          answer: "주요 산출물은 사용성 진단 리포트, UX 전략 문서, 화면 설계(와이어프레임·프로토타입), 디자인 시스템/가이드입니다. 프로젝트 범위에 맞춰 구성해 드려요."
+        },
+        {
+          id: "contact",
+          keywords: ["문의", "상담", "연락", "신청", "도입"],
+          answer: "도입 상담은 상단의 '도입 문의' 버튼 또는 우측 하단 문의 버튼으로 신청하실 수 있어요. 남겨 주시면 담당 컨설턴트가 빠르게 회신드립니다."
+        }
+      ]
+    };
+
+    window.matchUXIntent = function(message){
+      var text = String(message || "").toLowerCase().replace(/\s+/g, " ").trim();
+      var kb = window.UXBOT_KB;
+      for (var i = 0; i < kb.intents.length; i++) {
+        var intent = kb.intents[i];
+        for (var k = 0; k < intent.keywords.length; k++) {
+          if (text.indexOf(intent.keywords[k].toLowerCase()) !== -1) {
+            return { id: intent.id, answer: intent.answer };
+          }
+        }
+      }
+      return { id: "fallback", answer: kb.fallback };
+    };
+
+    // Self-test harness — runs only with ?selftest=1
+    if (window.location.search.indexOf("selftest=1") !== -1) {
+      var cases = [
+        ["UX 컨설팅이 뭔가요?", "service"],
+        ["진행 절차가 궁금해요", "process"],
+        ["기간과 비용은 얼마인가요?", "cost"],
+        ["원격으로도 진행되나요?", "remote"],
+        ["어떤 산출물을 받게 되나요?", "deliverable"],
+        ["상담 신청하고 싶어요", "contact"],
+        ["오늘 점심 뭐 먹지?", "service"],
+        ["asdfqwer 1234", "fallback"]
+      ];
+      var pass = 0;
+      cases.forEach(function(c){
+        var got = window.matchUXIntent(c[0]).id;
+        var ok = got === c[1];
+        if (ok) pass++;
+        console.log((ok ? "PASS" : "FAIL") + " | \"" + c[0] + "\" → " + got + " (expected " + c[1] + ")");
+      });
+      console.log("UXBOT self-test: " + pass + "/" + cases.length + " passed");
+    }
+  })();
+  </script>
+
   <!-- fullPage.js v4 -->
   <script src="https://cdn.jsdelivr.net/npm/fullpage.js@4/dist/fullpage.min.js"></script>
   <script>
