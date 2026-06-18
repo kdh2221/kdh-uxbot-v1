@@ -733,6 +733,30 @@
 
   <!-- dragscroll: drag/swipe horizontal scrolling for the quick-reply row (~1KB) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/dragscroll/0.0.8/dragscroll.min.js" referrerpolicy="no-referrer"></script>
+  <!-- guard: suppress the click that fires right after a drag-scroll ends on a chip -->
+  <script>
+  (function(){
+    "use strict";
+    var row = document.getElementById("uxbot-quick");
+    if (!row) return;
+    var THRESH = 6;            // px of movement that counts as a drag (not a tap)
+    var down = false, moved = false, sx = 0, sy = 0;
+
+    row.addEventListener("pointerdown", function(e){
+      down = true; moved = false; sx = e.clientX; sy = e.clientY;
+    });
+    row.addEventListener("pointermove", function(e){
+      if (!down) return;
+      if (Math.abs(e.clientX - sx) > THRESH || Math.abs(e.clientY - sy) > THRESH) moved = true;
+    });
+    window.addEventListener("pointerup", function(){ down = false; });
+
+    // Capture phase: if the gesture was a drag, swallow the click before it reaches the chip.
+    row.addEventListener("click", function(e){
+      if (moved) { e.stopPropagation(); e.preventDefault(); moved = false; }
+    }, true);
+  })();
+  </script>
 
   <!-- fullPage.js v4 -->
   <script src="https://cdn.jsdelivr.net/npm/fullpage.js@4/dist/fullpage.min.js"></script>
