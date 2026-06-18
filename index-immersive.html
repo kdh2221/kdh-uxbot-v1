@@ -308,7 +308,9 @@
   @keyframes uxblink{0%,60%,100%{opacity:.3}30%{opacity:1}}
 
   /* quick replies: single horizontally-scrollable row to keep the chat log tall */
-  #uxbot-quick{display:flex;flex-wrap:nowrap;gap:8px;padding:8px 18px 10px;overflow-x:auto;scrollbar-width:none}
+  #uxbot-quick{display:flex;flex-wrap:nowrap;gap:8px;padding:8px 18px 10px;overflow-x:auto;scrollbar-width:none;cursor:grab;user-select:none;-webkit-user-select:none;scroll-behavior:smooth;-webkit-overflow-scrolling:touch}
+  #uxbot-quick:active{cursor:grabbing}
+  #uxbot-quick.dragscroll{scroll-behavior:auto}
   #uxbot-quick::-webkit-scrollbar{display:none}
   #uxbot-quick:empty{display:none}
   .uxbot-chip{
@@ -469,7 +471,7 @@
       <button id="uxbot-close" type="button" aria-label="챗봇 닫기"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
     </header>
     <div id="uxbot-log" aria-live="polite"></div>
-    <div id="uxbot-quick"></div>
+    <div id="uxbot-quick" class="dragscroll"></div>
     <form id="uxbot-form" autocomplete="off">
       <input id="uxbot-input" type="text" placeholder="궁금한 점을 입력하세요…" aria-label="메시지 입력" />
       <button id="uxbot-send" type="submit">전송 <i class="fa-solid fa-paper-plane" aria-hidden="true"></i></button>
@@ -728,6 +730,9 @@
     });
   })();
   </script>
+
+  <!-- dragscroll: drag/swipe horizontal scrolling for the quick-reply row (~1KB) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dragscroll/0.0.8/dragscroll.min.js" referrerpolicy="no-referrer"></script>
 
   <!-- fullPage.js v4 -->
   <script src="https://cdn.jsdelivr.net/npm/fullpage.js@4/dist/fullpage.min.js"></script>
