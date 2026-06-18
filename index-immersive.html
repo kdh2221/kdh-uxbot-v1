@@ -8,16 +8,44 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+<!-- Font Awesome 6 (free) via CDN — all icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer" />
 <!-- fullPage.js v4 (vanilla) -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullpage.js@4/dist/fullpage.min.css" />
 <style>
   :root{
+    /* dark theme (default) */
+    --bg:#06070b;
+    --surface:#0c0e14;
+    --surface-soft:rgba(255,255,255,.05);
+    --surface-softer:rgba(255,255,255,.03);
     --ink:#f3f4f7;
     --ink-soft:#9aa0ad;
     --line:rgba(255,255,255,.14);
     --accent:#6ce0ff;
-    --bg:#06070b;
+    --accent-contrast:#05121a;       /* text/icon placed on accent fills */
+    --accent-glow:rgba(108,224,255,.4);
+    --grad-1:#6ce0ff; --grad-2:#bdecff; --grad-3:#ffffff;
+    --grain:rgba(0,0,0,.55);
+    --solid-nav:rgba(6,7,11,.72);
+    --footer-bg:#04050a;
     --ease:cubic-bezier(.16,1,.3,1);
+  }
+  html[data-theme="light"]{
+    --bg:#f4f6fb;
+    --surface:#ffffff;
+    --surface-soft:rgba(12,20,40,.05);
+    --surface-softer:rgba(12,20,40,.03);
+    --ink:#0f1626;
+    --ink-soft:#586074;
+    --line:rgba(12,20,40,.12);
+    --accent:#0a85ad;                /* deeper cyan for contrast on light */
+    --accent-contrast:#ffffff;
+    --accent-glow:rgba(10,133,173,.22);
+    --grad-1:#0a85ad; --grad-2:#16b0dd; --grad-3:#16243f;
+    --grain:rgba(12,20,40,.10);
+    --solid-nav:rgba(244,246,251,.8);
+    --footer-bg:#eaeef6;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   body{
@@ -26,8 +54,12 @@
     font-family:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
     -webkit-font-smoothing:antialiased;
     overflow-x:hidden;
+    transition:background .4s var(--ease), color .4s var(--ease);
   }
   a{color:inherit;text-decoration:none}
+
+  /* brand mark icon (replaces old dot) */
+  .brand-mark{color:var(--accent);filter:drop-shadow(0 0 10px var(--accent-glow))}
 
   /* ============ LOADER ============ */
   #loader{
@@ -42,13 +74,12 @@
     font-family:"Space Grotesk";font-weight:700;font-size:18px;letter-spacing:.02em;
     display:flex;align-items:center;gap:10px;color:var(--ink);
   }
-  .load-brand .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 16px var(--accent)}
   .load-num{
     font-family:"Space Grotesk";font-weight:700;
     font-size:clamp(3rem,12vw,9rem);letter-spacing:-.04em;line-height:1;
     color:var(--ink);
   }
-  .load-bar{width:min(280px,60vw);height:2px;background:rgba(255,255,255,.12);overflow:hidden}
+  .load-bar{width:min(280px,60vw);height:2px;background:var(--surface-soft);overflow:hidden}
   .load-bar > i{display:block;height:100%;width:0;background:var(--accent);box-shadow:0 0 12px var(--accent)}
   .load-label{font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-soft)}
 
@@ -61,25 +92,38 @@
     border-bottom:1px solid transparent;
   }
   header.nav.solid{
-    background:rgba(6,7,11,.72);
+    background:var(--solid-nav);
     backdrop-filter:blur(14px);
     padding:14px clamp(20px,4vw,56px);
     border-bottom:1px solid var(--line);
   }
   .brand{font-family:"Space Grotesk";font-weight:700;font-size:20px;display:flex;align-items:center;gap:10px}
-  .brand .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 14px var(--accent)}
   .nav-menu{display:flex;gap:clamp(16px,2.2vw,34px);list-style:none}
   .nav-menu a{font-size:14px;font-weight:500;color:var(--ink-soft);transition:color .25s}
+  .nav-menu a i{margin-right:7px;font-size:12px;opacity:.9}
   .nav-menu a:hover{color:var(--ink)}
-  .nav-actions{display:flex;align-items:center;gap:18px}
+  .nav-actions{display:flex;align-items:center;gap:14px}
   .nav-login{font-size:14px;color:var(--ink-soft);transition:color .25s}
+  .nav-login i{margin-right:6px;font-size:12px}
   .nav-login:hover{color:var(--ink)}
   .nav-cta{
-    font-size:13.5px;font-weight:600;color:#05121a;
+    font-size:13.5px;font-weight:600;color:var(--accent-contrast);
     background:var(--accent);padding:10px 20px;border-radius:999px;
+    display:inline-flex;align-items:center;gap:8px;
     transition:transform .2s var(--ease),box-shadow .25s;
   }
-  .nav-cta:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(108,224,255,.35)}
+  .nav-cta:hover{transform:translateY(-2px);box-shadow:0 10px 28px var(--accent-glow)}
+
+  /* theme toggle */
+  .theme-toggle{
+    width:38px;height:38px;border-radius:50%;
+    display:inline-flex;align-items:center;justify-content:center;
+    background:var(--surface-soft);border:1px solid var(--line);
+    color:var(--ink);font-size:15px;cursor:pointer;
+    transition:border-color .25s,background .25s,color .25s,transform .2s var(--ease);
+  }
+  .theme-toggle:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px)}
+  .theme-toggle:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 
   /* ============ SECTIONS ============ */
   .panel{
@@ -97,9 +141,15 @@
       radial-gradient(60% 70% at 85% 75%, hsla(calc(var(--h) + 40),70%,45%,.32), transparent 62%),
       linear-gradient(160deg,#05060a 10%, hsla(var(--h),40%,10%,1) 120%);
   }
+  html[data-theme="light"] .panel .bg{
+    background:
+      radial-gradient(70% 80% at var(--bx,25%) 30%, hsla(var(--h),90%,80%,.35), transparent 60%),
+      radial-gradient(60% 70% at 85% 75%, hsla(calc(var(--h) + 40),85%,78%,.28), transparent 62%),
+      linear-gradient(160deg,#ffffff 10%, hsla(var(--h),55%,95%,1) 120%);
+  }
   .panel .grain{
     position:absolute;inset:0;z-index:1;pointer-events:none;opacity:.5;
-    background:radial-gradient(120% 90% at 50% 50%, transparent 40%, rgba(0,0,0,.55) 100%);
+    background:radial-gradient(120% 90% at 50% 50%, transparent 40%, var(--grain) 100%);
   }
   .panel .inner{position:relative;z-index:2;max-width:1100px;width:100%}
 
@@ -118,7 +168,7 @@
     max-width:16ch;
   }
   .statement .grad{
-    background:linear-gradient(100deg,var(--accent),#bdecff 70%,#fff);
+    background:linear-gradient(100deg,var(--grad-1),var(--grad-2) 60%,var(--grad-3));
     -webkit-background-clip:text;background-clip:text;color:transparent;
   }
   .lead{
@@ -131,10 +181,10 @@
     display:inline-flex;align-items:center;gap:10px;
     font-size:15px;font-weight:600;color:var(--ink);
     padding:14px 26px;border:1px solid var(--line);border-radius:999px;
-    background:rgba(255,255,255,.03);
+    background:var(--surface-softer);
     transition:border-color .25s,background .25s,transform .2s var(--ease);
   }
-  .panel .cta:hover{border-color:var(--accent);background:rgba(108,224,255,.08);transform:translateY(-2px)}
+  .panel .cta:hover{border-color:var(--accent);background:var(--accent-glow);transform:translateY(-2px)}
   .panel .cta .arrow{transition:transform .2s var(--ease)}
   .panel .cta:hover .arrow{transform:translateX(4px)}
 
@@ -150,10 +200,11 @@
     display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(20px,3vw,50px);
     width:100%;max-width:1100px;
   }
+  .stat{padding-top:22px;border-top:1px solid var(--line)}
+  .stat-ic{color:var(--accent);font-size:18px;display:block;margin-bottom:14px}
   .stat .v{font-family:"Space Grotesk";font-weight:700;font-size:clamp(2.4rem,5.5vw,4.6rem);letter-spacing:-.03em;line-height:1}
   .stat .v .suffix{color:var(--accent);font-size:.5em;vertical-align:.35em;margin-left:.1em}
   .stat .k{margin-top:12px;font-size:14px;color:var(--ink-soft);letter-spacing:.02em}
-  .stat{padding-top:22px;border-top:1px solid var(--line)}
 
   /* ============ FOOTER / FINAL ============ */
   .final .statement{max-width:20ch}
@@ -161,12 +212,13 @@
     border-top:1px solid var(--line);
     padding:clamp(40px,6vw,70px) clamp(20px,6vw,90px) 40px;
     display:flex;flex-wrap:wrap;gap:24px;justify-content:space-between;align-items:center;
-    background:#04050a;
+    background:var(--footer-bg);
   }
   .foot .brand{font-size:18px}
   .foot .copy{font-size:13px;color:var(--ink-soft);max-width:46ch;line-height:1.6;margin-top:8px}
   .foot .links{display:flex;gap:22px;flex-wrap:wrap}
   .foot .links a{font-size:14px;color:var(--ink-soft);transition:color .25s}
+  .foot .links a i{margin-right:6px;font-size:11px;opacity:.85}
   .foot .links a:hover{color:var(--ink)}
 
   /* ============ fullPage.js nav dots ============ */
@@ -188,46 +240,44 @@
     *{animation:none!important}
     .rv{opacity:1;transform:none;transition:none}
     #loader{transition:none}
+    body{transition:none}
   }
 
   /* ============ UXBOT widget ============ */
   #uxbot-toggle{
     position:fixed;right:clamp(18px,3vw,34px);bottom:clamp(18px,3vw,34px);z-index:300;
     display:inline-flex;align-items:center;gap:10px;
-    background:var(--accent);color:#05121a;font-weight:600;font-size:14px;font-family:"Inter",sans-serif;
+    background:var(--accent);color:var(--accent-contrast);font-weight:600;font-size:14px;font-family:"Inter",sans-serif;
     padding:13px 20px;border:none;border-radius:999px;cursor:pointer;
-    box-shadow:0 14px 40px rgba(108,224,255,.4);
+    box-shadow:0 14px 40px var(--accent-glow);
     transition:transform .2s var(--ease),box-shadow .25s;
   }
-  #uxbot-toggle:hover{transform:translateY(-3px);box-shadow:0 18px 50px rgba(108,224,255,.55)}
-  #uxbot-toggle .ping{width:9px;height:9px;border-radius:50%;background:#05121a;position:relative}
-  #uxbot-toggle .ping::after{content:"";position:absolute;inset:0;border-radius:50%;background:#05121a;animation:ping 1.8s var(--ease) infinite}
-  @keyframes ping{0%{transform:scale(1);opacity:.7}100%{transform:scale(3.2);opacity:0}}
+  #uxbot-toggle:hover{transform:translateY(-3px);box-shadow:0 18px 50px var(--accent-glow)}
+  #uxbot-toggle i{font-size:15px}
 
   #uxbot-panel{
     position:fixed;right:clamp(18px,3vw,34px);bottom:calc(clamp(18px,3vw,34px) + 60px);z-index:300;
     width:min(380px,calc(100vw - 36px));height:min(560px,calc(100vh - 140px));
     display:flex;flex-direction:column;overflow:hidden;
-    background:#0c0e14;border:1px solid var(--line);border-radius:18px;
-    box-shadow:0 24px 70px rgba(0,0,0,.6);
+    background:var(--surface);border:1px solid var(--line);border-radius:18px;
+    box-shadow:0 24px 70px rgba(0,0,0,.45);
     opacity:0;visibility:hidden;transform:translateY(16px) scale(.98);
     transition:opacity .3s var(--ease),transform .3s var(--ease),visibility .3s var(--ease);
   }
   #uxbot-panel.open{opacity:1;visibility:visible;transform:none}
   .uxbot-head{
     display:flex;align-items:center;justify-content:space-between;gap:10px;
-    padding:16px 18px;border-bottom:1px solid var(--line);background:rgba(108,224,255,.06);
+    padding:16px 18px;border-bottom:1px solid var(--line);background:var(--surface-soft);
   }
   .uxbot-head .title{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:15px;display:flex;align-items:center;gap:9px}
-  .uxbot-head .title .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px var(--accent)}
   .uxbot-head .sub{font-size:11.5px;color:var(--ink-soft);margin-top:2px}
-  #uxbot-close{background:none;border:none;color:var(--ink-soft);font-size:20px;line-height:1;cursor:pointer;padding:4px;border-radius:8px}
+  #uxbot-close{background:none;border:none;color:var(--ink-soft);font-size:18px;line-height:1;cursor:pointer;padding:4px;border-radius:8px}
   #uxbot-close:hover{color:var(--ink)}
 
   #uxbot-log{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:12px}
   .uxbot-msg{max-width:84%;padding:11px 14px;border-radius:14px;font-size:14px;line-height:1.55;white-space:pre-wrap;word-break:break-word}
-  .uxbot-msg.bot{align-self:flex-start;background:rgba(255,255,255,.05);color:var(--ink);border:1px solid var(--line);border-bottom-left-radius:4px}
-  .uxbot-msg.user{align-self:flex-end;background:var(--accent);color:#05121a;font-weight:500;border-bottom-right-radius:4px}
+  .uxbot-msg.bot{align-self:flex-start;background:var(--surface-soft);color:var(--ink);border:1px solid var(--line);border-bottom-left-radius:4px}
+  .uxbot-msg.user{align-self:flex-end;background:var(--accent);color:var(--accent-contrast);font-weight:500;border-bottom-right-radius:4px}
   .uxbot-typing{align-self:flex-start;color:var(--ink-soft);font-size:13px;padding:4px 6px}
   .uxbot-typing span{display:inline-block;width:6px;height:6px;margin:0 1px;border-radius:50%;background:var(--ink-soft);animation:uxblink 1.2s infinite}
   .uxbot-typing span:nth-child(2){animation-delay:.2s}
@@ -236,21 +286,22 @@
 
   #uxbot-quick{display:flex;flex-wrap:wrap;gap:8px;padding:0 18px 12px}
   .uxbot-chip{
-    font-size:12.5px;color:var(--ink);background:rgba(255,255,255,.04);
+    font-size:12.5px;color:var(--ink);background:var(--surface-softer);
     border:1px solid var(--line);border-radius:999px;padding:8px 13px;cursor:pointer;
     transition:border-color .2s,background .2s;
   }
-  .uxbot-chip:hover{border-color:var(--accent);background:rgba(108,224,255,.08)}
+  .uxbot-chip:hover{border-color:var(--accent);background:var(--accent-glow)}
 
   #uxbot-form{display:flex;gap:9px;padding:14px 16px;border-top:1px solid var(--line)}
   #uxbot-input{
-    flex:1;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:12px;
+    flex:1;background:var(--surface-soft);border:1px solid var(--line);border-radius:12px;
     color:var(--ink);font-size:14px;font-family:"Inter",sans-serif;padding:11px 14px;outline:none;
   }
   #uxbot-input:focus-visible{border-color:var(--accent);outline:2px solid var(--accent);outline-offset:2px}
   #uxbot-send{
-    background:var(--accent);color:#05121a;border:none;border-radius:12px;
+    background:var(--accent);color:var(--accent-contrast);border:none;border-radius:12px;
     font-weight:600;font-size:14px;padding:0 16px;cursor:pointer;
+    display:inline-flex;align-items:center;gap:7px;
   }
   #uxbot-send:disabled{opacity:.5;cursor:default}
 
@@ -259,17 +310,20 @@
   }
 
   @media (prefers-reduced-motion:reduce){
-    #uxbot-toggle .ping::after{display:none}
     #uxbot-panel{transition:opacity .01s,visibility .01s;transform:none}
     .uxbot-typing span{animation:none}
   }
 </style>
+<script>
+  /* anti-FOUC: apply saved theme before first paint */
+  (function(){ try{ if(localStorage.getItem("inswave-theme")==="light"){ document.documentElement.setAttribute("data-theme","light"); } }catch(e){} })();
+</script>
 </head>
 <body>
 
   <!-- ============ LOADER ============ -->
   <div id="loader" aria-hidden="true">
-    <div class="load-brand"><span class="dot"></span>inswave</div>
+    <div class="load-brand"><i class="fa-solid fa-water brand-mark" aria-hidden="true"></i>inswave</div>
     <div class="load-num"><span id="loadNum">0</span></div>
     <div class="load-bar"><i id="loadBar"></i></div>
     <div class="load-label">AI 혁신의 물결</div>
@@ -277,16 +331,17 @@
 
   <!-- ============ NAV ============ -->
   <header class="nav" id="nav">
-    <a class="brand" href="#s1"><span class="dot"></span>inswave</a>
+    <a class="brand" href="#s1"><i class="fa-solid fa-water brand-mark" aria-hidden="true"></i>inswave</a>
     <ul class="nav-menu">
-      <li><a href="#s2">제품</a></li>
-      <li><a href="#s3">WebSquare AI</a></li>
-      <li><a href="#s4">도입사례</a></li>
-      <li><a href="#s5">회사소개</a></li>
+      <li><a href="#s2"><i class="fa-solid fa-cube" aria-hidden="true"></i>제품</a></li>
+      <li><a href="#s3"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>WebSquare AI</a></li>
+      <li><a href="#s4"><i class="fa-solid fa-briefcase" aria-hidden="true"></i>도입사례</a></li>
+      <li><a href="#s5"><i class="fa-solid fa-building" aria-hidden="true"></i>회사소개</a></li>
     </ul>
     <div class="nav-actions">
-      <a class="nav-login" href="#">로그인</a>
-      <a class="nav-cta" href="#contact">도입 문의</a>
+      <button id="theme-toggle" class="theme-toggle" type="button" aria-label="라이트 테마로 전환"><i class="fa-solid fa-sun" aria-hidden="true"></i></button>
+      <a class="nav-login" href="#"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i>로그인</a>
+      <a class="nav-cta" href="#contact">도입 문의 <i class="fa-solid fa-paper-plane" aria-hidden="true"></i></a>
     </div>
   </header>
 
@@ -301,7 +356,7 @@
         <span class="eyebrow rv"><span class="idx">01</span><span class="ln"></span>AI 혁신의 물결</span>
         <h1 class="statement rv d1">엔터프라이즈 UI의 <span class="grad">미래를 만듭니다.</span></h1>
         <p class="lead rv d2">2002년 국내 최초로 웹 표준 UI/UX 개발 플랫폼을 선보인 인스웨이브시스템즈. 금융·공공·기업의 화면을 더 빠르고, 더 똑똑하게.</p>
-        <a class="cta rv d3" href="#s2">프로젝트 둘러보기 <span class="arrow">→</span></a>
+        <a class="cta rv d3" href="#s2">프로젝트 둘러보기 <i class="fa-solid fa-arrow-right arrow" aria-hidden="true"></i></a>
       </div>
     </section>
 
@@ -313,7 +368,7 @@
         <span class="eyebrow rv"><span class="idx">02</span><span class="ln"></span>Innovation</span>
         <h2 class="statement rv d1">개발의 방식을 <span class="grad">새로 정의합니다.</span></h2>
         <p class="lead rv d2">생성형 AI 기반 UI 자동 생성으로 화면 설계부터 코드까지. 반복은 줄이고, 완성도는 높이는 차세대 개발 경험을 제시합니다.</p>
-        <a class="cta rv d3" href="#s3">WebSquare AI 알아보기 <span class="arrow">→</span></a>
+        <a class="cta rv d3" href="#s3">WebSquare AI 알아보기 <i class="fa-solid fa-arrow-right arrow" aria-hidden="true"></i></a>
       </div>
     </section>
 
@@ -325,7 +380,7 @@
         <span class="eyebrow rv"><span class="idx">03</span><span class="ln"></span>Platform</span>
         <h2 class="statement rv d1">하나의 플랫폼으로 <span class="grad">모든 화면을.</span></h2>
         <p class="lead rv d2">WebSquare AI, ProWorks5, W-Matrix, WebTop까지 — 웹·앱·금융 단말을 아우르는 통합 UI/UX 플랫폼으로 전 채널을 일관되게 구축합니다.</p>
-        <a class="cta rv d3" href="#s4">제품군 보기 <span class="arrow">→</span></a>
+        <a class="cta rv d3" href="#s4">제품군 보기 <i class="fa-solid fa-arrow-right arrow" aria-hidden="true"></i></a>
       </div>
     </section>
 
@@ -336,10 +391,10 @@
       <div class="inner">
         <span class="eyebrow rv"><span class="idx">04</span><span class="ln"></span>By the numbers</span>
         <div class="stats">
-          <div class="stat rv d1"><div class="v" data-plain="1">2002</div><div class="k">설립 · 국내 최초 웹 표준 UI/UX 플랫폼</div></div>
-          <div class="stat rv d1"><div class="v" data-count="387"><span class="num">0</span><span class="suffix">+</span></div><div class="k">임직원 (2025)</div></div>
-          <div class="stat rv d2"><div class="v" data-count="20"><span class="num">0</span><span class="suffix">년+</span></div><div class="k">엔터프라이즈 UI/UX 전문성</div></div>
-          <div class="stat rv d2"><div class="v" data-plain="1" style="font-size:clamp(1.7rem,3.6vw,3rem)">KOSDAQ</div><div class="k">코스닥 상장 · 450520</div></div>
+          <div class="stat rv d1"><i class="fa-solid fa-flag stat-ic" aria-hidden="true"></i><div class="v" data-plain="1">2002</div><div class="k">설립 · 국내 최초 웹 표준 UI/UX 플랫폼</div></div>
+          <div class="stat rv d1"><i class="fa-solid fa-users stat-ic" aria-hidden="true"></i><div class="v" data-count="387"><span class="num">0</span><span class="suffix">+</span></div><div class="k">임직원 (2025)</div></div>
+          <div class="stat rv d2"><i class="fa-solid fa-award stat-ic" aria-hidden="true"></i><div class="v" data-count="20"><span class="num">0</span><span class="suffix">년+</span></div><div class="k">엔터프라이즈 UI/UX 전문성</div></div>
+          <div class="stat rv d2"><i class="fa-solid fa-chart-line stat-ic" aria-hidden="true"></i><div class="v" data-plain="1" style="font-size:clamp(1.7rem,3.6vw,3rem)">KOSDAQ</div><div class="k">코스닥 상장 · 450520</div></div>
         </div>
       </div>
     </section>
@@ -352,7 +407,7 @@
         <span class="eyebrow rv"><span class="idx">05</span><span class="ln"></span>Together</span>
         <h2 class="statement rv d1">내일의 디지털을 <span class="grad">함께 설계합니다.</span></h2>
         <p class="lead rv d2">금융과 공공, 그리고 기업의 디지털 전환 — 그 화면 너머의 혁신을 인스웨이브시스템즈가 함께합니다.</p>
-        <a class="cta rv d3" href="#contact">도입 문의하기 <span class="arrow">→</span></a>
+        <a class="cta rv d3" href="#contact">도입 문의하기 <i class="fa-solid fa-arrow-right arrow" aria-hidden="true"></i></a>
       </div>
     </section>
 
@@ -360,14 +415,14 @@
     <section class="section fp-auto-height" data-anchor="contact">
       <footer class="foot">
         <div>
-          <div class="brand"><span class="dot"></span>inswave</div>
+          <div class="brand"><i class="fa-solid fa-water brand-mark" aria-hidden="true"></i>inswave</div>
           <p class="copy">인스웨이브시스템즈 · 2002년 국내 최초 웹 표준 UI/UX 개발 플랫폼 전문기업. 생성형 AI 기반 UI 자동 생성 WebSquare AI.</p>
         </div>
         <div class="links">
-          <a href="#s2">제품</a>
-          <a href="#s3">WebSquare AI</a>
-          <a href="#s4">도입사례</a>
-          <a href="#s5">회사소개</a>
+          <a href="#s2"><i class="fa-solid fa-cube" aria-hidden="true"></i>제품</a>
+          <a href="#s3"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>WebSquare AI</a>
+          <a href="#s4"><i class="fa-solid fa-briefcase" aria-hidden="true"></i>도입사례</a>
+          <a href="#s5"><i class="fa-solid fa-building" aria-hidden="true"></i>회사소개</a>
         </div>
       </footer>
     </section>
@@ -376,21 +431,21 @@
 
   <!-- ============ UXBOT widget ============ -->
   <button id="uxbot-toggle" type="button" aria-expanded="false" aria-controls="uxbot-panel" aria-label="UX 담당 챗봇 열기">
-    <span class="ping" aria-hidden="true"></span>UX 상담봇
+    <i class="fa-solid fa-headset" aria-hidden="true"></i> UX 상담봇
   </button>
   <section id="uxbot-panel" role="dialog" aria-modal="false" aria-label="UX 담당 챗봇" aria-hidden="true">
     <header class="uxbot-head">
       <div>
-        <div class="title"><span class="dot"></span>UX 담당봇</div>
+        <div class="title"><i class="fa-solid fa-headset brand-mark" aria-hidden="true"></i> UX 담당봇</div>
         <div class="sub">UX 컨설팅 문의를 도와드려요</div>
       </div>
-      <button id="uxbot-close" type="button" aria-label="챗봇 닫기">&times;</button>
+      <button id="uxbot-close" type="button" aria-label="챗봇 닫기"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
     </header>
     <div id="uxbot-log" aria-live="polite"></div>
     <div id="uxbot-quick"></div>
     <form id="uxbot-form" autocomplete="off">
       <input id="uxbot-input" type="text" placeholder="궁금한 점을 입력하세요…" aria-label="메시지 입력" />
-      <button id="uxbot-send" type="submit">전송</button>
+      <button id="uxbot-send" type="submit">전송 <i class="fa-solid fa-paper-plane" aria-hidden="true"></i></button>
     </form>
   </section>
 
@@ -614,6 +669,35 @@
     form.addEventListener("submit", function(e){
       e.preventDefault();
       send(input.value);
+    });
+  })();
+  </script>
+
+  <!-- ============ THEME TOGGLE (light / dark) ============ -->
+  <script>
+  (function(){
+    "use strict";
+    var KEY = "inswave-theme";
+    var btn = document.getElementById("theme-toggle");
+    var root = document.documentElement;
+    if (!btn) return;
+
+    function isLight(){ return root.getAttribute("data-theme") === "light"; }
+
+    function syncIcon(){
+      var i = btn.querySelector("i");
+      var light = isLight();
+      if (i){ i.className = light ? "fa-solid fa-moon" : "fa-solid fa-sun"; }
+      btn.setAttribute("aria-label", light ? "다크 테마로 전환" : "라이트 테마로 전환");
+    }
+    syncIcon();
+
+    btn.addEventListener("click", function(){
+      var nextLight = !isLight();
+      if (nextLight) root.setAttribute("data-theme", "light");
+      else root.removeAttribute("data-theme");
+      try { localStorage.setItem(KEY, nextLight ? "light" : "dark"); } catch(e){}
+      syncIcon();
     });
   })();
   </script>
