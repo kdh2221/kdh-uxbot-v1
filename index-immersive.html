@@ -380,6 +380,29 @@
       return { id: "fallback", answer: kb.fallback };
     };
 
+    // Single swap point. mock now; later: Claude claude-opus-4-8 streaming via backend proxy.
+    window.askUXBot = function(message, history, onChunk){
+      var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      var full = window.matchUXIntent(message).answer;
+      return new Promise(function(resolve){
+        if (reduce) {
+          if (typeof onChunk === "function") onChunk(full);
+          resolve(full);
+          return;
+        }
+        var words = full.split(" ");
+        var i = 0, shown = "";
+        var tick = function(){
+          if (i >= words.length) { resolve(full); return; }
+          shown += (i === 0 ? "" : " ") + words[i];
+          i++;
+          if (typeof onChunk === "function") onChunk(shown);
+          setTimeout(tick, 28);
+        };
+        setTimeout(tick, 220); // brief "thinking" delay
+      });
+    };
+
     // Self-test harness — runs only with ?selftest=1
     if (window.location.search.indexOf("selftest=1") !== -1) {
       var cases = [
