@@ -326,7 +326,7 @@
     flex:1;background:var(--surface-soft);border:1px solid var(--line);border-radius:12px;
     color:var(--ink);font-size:14px;font-family:"Inter",sans-serif;padding:11px 14px;outline:none;
   }
-  #uxbot-input:focus-visible{border-color:var(--accent);outline:2px solid var(--accent);outline-offset:2px}
+  #uxbot-input:focus-visible{border-color:var(--accent);outline:2px solid var(--accent)}
   #uxbot-send{
     background:var(--accent);color:var(--accent-contrast);border:none;border-radius:12px;
     font-weight:600;font-size:14px;padding:0 16px;cursor:pointer;
@@ -670,6 +670,10 @@
         busy = false;
         sendBtn.disabled = false;
         renderQuickReplies();         // restore chips for next turn
+        // chips re-appearing shrinks the log — re-pin to bottom so the last
+        // answer isn't cut off behind the quick-reply row
+        scrollDown();
+        if (window.requestAnimationFrame) requestAnimationFrame(scrollDown);
         input.focus();
       });
     }
