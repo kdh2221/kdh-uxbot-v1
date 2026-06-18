@@ -517,20 +517,99 @@
   })();
   </script>
 
-  <!-- ============ UXBOT: open/close wiring ============ -->
+  <!-- ============ UXBOT: conversation wiring ============ -->
   <script>
   (function(){
     "use strict";
     var toggle = document.getElementById("uxbot-toggle");
     var panel = document.getElementById("uxbot-panel");
     var closeBtn = document.getElementById("uxbot-close");
+    var log = document.getElementById("uxbot-log");
+    var quick = document.getElementById("uxbot-quick");
+    var form = document.getElementById("uxbot-form");
     var input = document.getElementById("uxbot-input");
+    var sendBtn = document.getElementById("uxbot-send");
+
+    var kb = window.UXBOT_KB;
+    var history = [];
+    var greeted = false;
+    var busy = false;
+
+    function scrollDown(){ log.scrollTop = log.scrollHeight; }
+
+    function addMsg(role, text){
+      var el = document.createElement("div");
+      el.className = "uxbot-msg " + role;
+      el.textContent = text;
+      log.appendChild(el);
+      scrollDown();
+      return el;
+    }
+
+    function showTyping(){
+      var el = document.createElement("div");
+      el.className = "uxbot-typing";
+      el.setAttribute("aria-hidden", "true");
+      el.innerHTML = "<span></span><span></span><span></span>";
+      log.appendChild(el);
+      scrollDown();
+      return el;
+    }
+
+    function renderQuickReplies(){
+      quick.innerHTML = "";
+      kb.quickReplies.forEach(function(q){
+        var chip = document.createElement("button");
+        chip.type = "button";
+        chip.className = "uxbot-chip";
+        chip.textContent = q;
+        chip.addEventListener("click", function(){ if (!busy) send(q); });
+        quick.appendChild(chip);
+      });
+    }
+
+    function greet(){
+      if (greeted) return;
+      greeted = true;
+      addMsg("bot", kb.welcome);
+      renderQuickReplies();
+    }
+
+    function send(message){
+      var text = String(message || "").trim();
+      if (!text || busy) return;
+      busy = true;
+      sendBtn.disabled = true;
+      quick.innerHTML = "";           // hide chips during a turn
+      addMsg("user", text);
+      history.push({ role: "user", content: text });
+      input.value = "";
+
+      var typing = showTyping();
+      var botEl = null;
+
+      window.askUXBot(text, history, function(partial){
+        if (typing && typing.parentNode) { typing.parentNode.removeChild(typing); typing = null; }
+        if (!botEl) botEl = addMsg("bot", "");
+        botEl.textContent = partial;
+        scrollDown();
+      }).then(function(full){
+        if (typing && typing.parentNode) { typing.parentNode.removeChild(typing); typing = null; }
+        if (!botEl) botEl = addMsg("bot", full); else botEl.textContent = full;
+        history.push({ role: "assistant", content: full });
+        busy = false;
+        sendBtn.disabled = false;
+        renderQuickReplies();         // restore chips for next turn
+        input.focus();
+      });
+    }
 
     function openPanel(){
       panel.classList.add("open");
       panel.setAttribute("aria-hidden", "false");
       toggle.setAttribute("aria-expanded", "true");
-      if (input) input.focus();
+      greet();
+      input.focus();
     }
     function closePanel(){
       panel.classList.remove("open");
@@ -538,6 +617,7 @@
       toggle.setAttribute("aria-expanded", "false");
       toggle.focus();
     }
+
     toggle.addEventListener("click", function(){
       if (panel.classList.contains("open")) closePanel(); else openPanel();
     });
@@ -545,9 +625,10 @@
     document.addEventListener("keydown", function(e){
       if (e.key === "Escape" && panel.classList.contains("open")) closePanel();
     });
-
-    // expose for Task 4
-    window.__uxbotOpen = openPanel;
+    form.addEventListener("submit", function(e){
+      e.preventDefault();
+      send(input.value);
+    });
   })();
   </script>
 
