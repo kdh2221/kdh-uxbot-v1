@@ -202,6 +202,7 @@
   #uxbot-toggle:hover{transform:translateY(-3px);box-shadow:0 18px 50px rgba(108,224,255,.55)}
   #uxbot-toggle .ping{width:9px;height:9px;border-radius:50%;background:#05121a;position:relative}
   #uxbot-toggle .ping::after{content:"";position:absolute;inset:0;border-radius:50%;background:#05121a;animation:ping 1.8s var(--ease) infinite}
+  @keyframes ping{0%{transform:scale(1);opacity:.7}100%{transform:scale(3.2);opacity:0}}
 
   #uxbot-panel{
     position:fixed;right:clamp(18px,3vw,34px);bottom:calc(clamp(18px,3vw,34px) + 60px);z-index:300;
