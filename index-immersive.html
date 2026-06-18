@@ -69,9 +69,6 @@
   ::-webkit-scrollbar-thumb:hover{background:var(--ink-soft);background-clip:padding-box}
   ::-webkit-scrollbar-corner{background:transparent}
 
-  /* brand mark icon (replaces old dot) */
-  .brand-mark{color:var(--accent);filter:drop-shadow(0 0 10px var(--accent-glow))}
-
   /* ============ LOADER ============ */
   #loader{
     position:fixed;inset:0;z-index:1000;
@@ -111,11 +108,9 @@
   .brand{font-family:"Space Grotesk";font-weight:700;font-size:20px;display:flex;align-items:center;gap:10px}
   .nav-menu{display:flex;gap:clamp(16px,2.2vw,34px);list-style:none}
   .nav-menu a{font-size:14px;font-weight:500;color:var(--ink-soft);transition:color .25s}
-  .nav-menu a i{margin-right:7px;font-size:12px;opacity:.9}
   .nav-menu a:hover{color:var(--ink)}
   .nav-actions{display:flex;align-items:center;gap:14px}
   .nav-login{font-size:14px;color:var(--ink-soft);transition:color .25s}
-  .nav-login i{margin-right:6px;font-size:12px}
   .nav-login:hover{color:var(--ink)}
   .nav-cta{
     font-size:13.5px;font-weight:600;color:var(--accent-contrast);
@@ -212,7 +207,6 @@
     width:100%;max-width:1100px;
   }
   .stat{padding-top:22px;border-top:1px solid var(--line)}
-  .stat-ic{color:var(--accent);font-size:18px;display:block;margin-bottom:14px}
   .stat .v{font-family:"Space Grotesk";font-weight:700;font-size:clamp(2.4rem,5.5vw,4.6rem);letter-spacing:-.03em;line-height:1}
   .stat .v .suffix{color:var(--accent);font-size:.5em;vertical-align:.35em;margin-left:.1em}
   .stat .k{margin-top:12px;font-size:14px;color:var(--ink-soft);letter-spacing:.02em}
@@ -229,7 +223,6 @@
   .foot .copy{font-size:13px;color:var(--ink-soft);max-width:46ch;line-height:1.6;margin-top:8px}
   .foot .links{display:flex;gap:22px;flex-wrap:wrap}
   .foot .links a{font-size:14px;color:var(--ink-soft);transition:color .25s}
-  .foot .links a i{margin-right:6px;font-size:11px;opacity:.85}
   .foot .links a:hover{color:var(--ink)}
 
   /* ============ fullPage.js nav dots ============ */
@@ -352,7 +345,7 @@
 
   <!-- ============ LOADER ============ -->
   <div id="loader" aria-hidden="true">
-    <div class="load-brand"><i class="fa-solid fa-water brand-mark" aria-hidden="true"></i>inswave</div>
+    <div class="load-brand">inswave</div>
     <div class="load-num"><span id="loadNum">0</span></div>
     <div class="load-bar"><i id="loadBar"></i></div>
     <div class="load-label">AI 혁신의 물결</div>
@@ -360,17 +353,17 @@
 
   <!-- ============ NAV ============ -->
   <header class="nav" id="nav">
-    <a class="brand" href="#s1"><i class="fa-solid fa-water brand-mark" aria-hidden="true"></i>inswave</a>
+    <a class="brand" href="#s1">inswave</a>
     <ul class="nav-menu">
-      <li><a href="#s2"><i class="fa-solid fa-cube" aria-hidden="true"></i>제품</a></li>
-      <li><a href="#s3"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>WebSquare AI</a></li>
-      <li><a href="#s4"><i class="fa-solid fa-briefcase" aria-hidden="true"></i>도입사례</a></li>
-      <li><a href="#s5"><i class="fa-solid fa-building" aria-hidden="true"></i>회사소개</a></li>
+      <li><a href="#s2">제품</a></li>
+      <li><a href="#s3">WebSquare AI</a></li>
+      <li><a href="#s4">도입사례</a></li>
+      <li><a href="#s5">회사소개</a></li>
     </ul>
     <div class="nav-actions">
       <button id="theme-toggle" class="theme-toggle" type="button" aria-label="라이트 테마로 전환"><i class="fa-solid fa-sun" aria-hidden="true"></i></button>
-      <a class="nav-login" href="#"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i>로그인</a>
-      <a class="nav-cta" href="#contact">도입 문의 <i class="fa-solid fa-paper-plane" aria-hidden="true"></i></a>
+      <a class="nav-login" href="#">로그인</a>
+      <a class="nav-cta" href="#contact">도입 문의</a>
     </div>
   </header>
 
@@ -420,10 +413,10 @@
       <div class="inner">
         <span class="eyebrow rv"><span class="idx">04</span><span class="ln"></span>By the numbers</span>
         <div class="stats">
-          <div class="stat rv d1"><i class="fa-solid fa-flag stat-ic" aria-hidden="true"></i><div class="v" data-plain="1">2002</div><div class="k">설립 · 국내 최초 웹 표준 UI/UX 플랫폼</div></div>
-          <div class="stat rv d1"><i class="fa-solid fa-users stat-ic" aria-hidden="true"></i><div class="v" data-count="387"><span class="num">0</span><span class="suffix">+</span></div><div class="k">임직원 (2025)</div></div>
-          <div class="stat rv d2"><i class="fa-solid fa-award stat-ic" aria-hidden="true"></i><div class="v" data-count="20"><span class="num">0</span><span class="suffix">년+</span></div><div class="k">엔터프라이즈 UI/UX 전문성</div></div>
-          <div class="stat rv d2"><i class="fa-solid fa-chart-line stat-ic" aria-hidden="true"></i><div class="v" data-plain="1" style="font-size:clamp(1.7rem,3.6vw,3rem)">KOSDAQ</div><div class="k">코스닥 상장 · 450520</div></div>
+          <div class="stat rv d1"><div class="v" data-plain="1">2002</div><div class="k">설립 · 국내 최초 웹 표준 UI/UX 플랫폼</div></div>
+          <div class="stat rv d1"><div class="v" data-count="387"><span class="num">0</span><span class="suffix">+</span></div><div class="k">임직원 (2025)</div></div>
+          <div class="stat rv d2"><div class="v" data-count="20"><span class="num">0</span><span class="suffix">년+</span></div><div class="k">엔터프라이즈 UI/UX 전문성</div></div>
+          <div class="stat rv d2"><div class="v" data-plain="1" style="font-size:clamp(1.7rem,3.6vw,3rem)">KOSDAQ</div><div class="k">코스닥 상장 · 450520</div></div>
         </div>
       </div>
     </section>
@@ -444,14 +437,14 @@
     <section class="section fp-auto-height" data-anchor="contact">
       <footer class="foot">
         <div>
-          <div class="brand"><i class="fa-solid fa-water brand-mark" aria-hidden="true"></i>inswave</div>
+          <div class="brand">inswave</div>
           <p class="copy">인스웨이브시스템즈 · 2002년 국내 최초 웹 표준 UI/UX 개발 플랫폼 전문기업. 생성형 AI 기반 UI 자동 생성 WebSquare AI.</p>
         </div>
         <div class="links">
-          <a href="#s2"><i class="fa-solid fa-cube" aria-hidden="true"></i>제품</a>
-          <a href="#s3"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>WebSquare AI</a>
-          <a href="#s4"><i class="fa-solid fa-briefcase" aria-hidden="true"></i>도입사례</a>
-          <a href="#s5"><i class="fa-solid fa-building" aria-hidden="true"></i>회사소개</a>
+          <a href="#s2">제품</a>
+          <a href="#s3">WebSquare AI</a>
+          <a href="#s4">도입사례</a>
+          <a href="#s5">회사소개</a>
         </div>
       </footer>
     </section>
@@ -465,7 +458,7 @@
   <section id="uxbot-panel" role="dialog" aria-modal="false" aria-label="UX 담당 챗봇" aria-hidden="true">
     <header class="uxbot-head">
       <div>
-        <div class="title"><i class="fa-solid fa-headset brand-mark" aria-hidden="true"></i> UX 담당봇</div>
+        <div class="title">UX 담당봇</div>
         <div class="sub">UX 컨설팅 문의를 도와드려요</div>
       </div>
       <button id="uxbot-close" type="button" aria-label="챗봇 닫기"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
