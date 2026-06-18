@@ -661,6 +661,8 @@
     var sendBtn = document.getElementById("uxbot-send");
     var expandBtn = document.getElementById("uxbot-expand");
     var backdrop = document.getElementById("uxbot-backdrop");
+    var topicsNav = document.getElementById("uxbot-topics");
+    var newChatBtn = document.getElementById("uxbot-newchat");
     var expanded = false;
 
     var kb = window.UXBOT_KB;
@@ -802,6 +804,37 @@
       e.preventDefault();
       send(input.value);
     });
+
+    // sidebar: topic shortcuts + new chat (expanded 2-pane)
+    var TOPICS = [
+      { label: "서비스 소개", q: "UX 컨설팅이 뭔가요?" },
+      { label: "진행 절차",   q: "진행 절차가 궁금해요" },
+      { label: "기간·비용",   q: "기간과 비용은 어떻게 되나요?" },
+      { label: "원격 진행",   q: "원격으로도 진행되나요?" },
+      { label: "산출물",      q: "어떤 산출물을 받게 되나요?" },
+      { label: "도입 문의",   q: "상담 신청하고 싶어요" }
+    ];
+    function renderTopics(){
+      if (!topicsNav) return;
+      topicsNav.innerHTML = "";
+      TOPICS.forEach(function(t){
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "uxbot-topic";
+        b.textContent = t.label;
+        b.addEventListener("click", function(){ if (!busy) send(t.q); });
+        topicsNav.appendChild(b);
+      });
+    }
+    function resetChat(){
+      if (busy) return;
+      log.innerHTML = "";
+      history.length = 0;
+      greeted = false;
+      greet();
+    }
+    if (newChatBtn) newChatBtn.addEventListener("click", resetChat);
+    renderTopics();
   })();
   </script>
 
