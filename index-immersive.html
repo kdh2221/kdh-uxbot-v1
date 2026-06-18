@@ -5,29 +5,71 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>inswave — AI 혁신의 물결</title>
 <meta name="description" content="2002년 국내 최초 웹 표준 UI/UX 개발 플랫폼 전문기업. WebSquare AI와 생성형 AI 기반 UI 자동 생성." />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+<!-- Font Awesome 6 (free) via CDN — all icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer" />
 <!-- fullPage.js v4 (vanilla) -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullpage.js@4/dist/fullpage.min.css" />
 <style>
+  /* ============ Pretendard (local) ============ */
+  @font-face{font-family:"Pretendard";font-weight:400;font-style:normal;font-display:swap;src:url("font/pretendard/Pretendard-Regular.woff2") format("woff2")}
+  @font-face{font-family:"Pretendard";font-weight:500;font-style:normal;font-display:swap;src:url("font/pretendard/Pretendard-Medium.woff2") format("woff2")}
+  @font-face{font-family:"Pretendard";font-weight:700;font-style:normal;font-display:swap;src:url("font/pretendard/Pretendard-Bold.woff2") format("woff2")}
+
   :root{
+    /* dark theme (default) */
+    --bg:#06070b;
+    --surface:#0c0e14;
+    --surface-soft:rgba(255,255,255,.05);
+    --surface-softer:rgba(255,255,255,.03);
     --ink:#f3f4f7;
     --ink-soft:#9aa0ad;
     --line:rgba(255,255,255,.14);
     --accent:#6ce0ff;
-    --bg:#06070b;
+    --accent-contrast:#05121a;       /* text/icon placed on accent fills */
+    --accent-glow:rgba(108,224,255,.4);
+    --grad-1:#6ce0ff; --grad-2:#bdecff; --grad-3:#ffffff;
+    --grain:rgba(0,0,0,.55);
+    --solid-nav:rgba(6,7,11,.72);
+    --footer-bg:#04050a;
     --ease:cubic-bezier(.16,1,.3,1);
+  }
+  html[data-theme="light"]{
+    --bg:#f4f6fb;
+    --surface:#ffffff;
+    --surface-soft:rgba(12,20,40,.05);
+    --surface-softer:rgba(12,20,40,.03);
+    --ink:#0f1626;
+    --ink-soft:#586074;
+    --line:rgba(12,20,40,.12);
+    --accent:#0a85ad;                /* deeper cyan for contrast on light */
+    --accent-contrast:#ffffff;
+    --accent-glow:rgba(10,133,173,.22);
+    --grad-1:#0a85ad; --grad-2:#16b0dd; --grad-3:#16243f;
+    --grain:rgba(12,20,40,.10);
+    --solid-nav:rgba(244,246,251,.8);
+    --footer-bg:#eaeef6;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   body{
     background:var(--bg);
     color:var(--ink);
-    font-family:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    font-family:"Pretendard",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
     -webkit-font-smoothing:antialiased;
     overflow-x:hidden;
+    transition:background .4s var(--ease), color .4s var(--ease);
   }
   a{color:inherit;text-decoration:none}
+
+  /* ============ modern minimal scrollbars ============ */
+  *{scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+  ::-webkit-scrollbar{width:8px;height:8px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{
+    background:var(--line);border-radius:999px;
+    border:2px solid transparent;background-clip:padding-box;
+  }
+  ::-webkit-scrollbar-thumb:hover{background:var(--ink-soft);background-clip:padding-box}
+  ::-webkit-scrollbar-corner{background:transparent}
 
   /* ============ LOADER ============ */
   #loader{
@@ -39,16 +81,15 @@
   }
   #loader.done{opacity:0;visibility:hidden}
   .load-brand{
-    font-family:"Space Grotesk";font-weight:700;font-size:18px;letter-spacing:.02em;
+    font-family:"Pretendard";font-weight:700;font-size:18px;letter-spacing:.02em;
     display:flex;align-items:center;gap:10px;color:var(--ink);
   }
-  .load-brand .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 16px var(--accent)}
   .load-num{
-    font-family:"Space Grotesk";font-weight:700;
+    font-family:"Pretendard";font-weight:700;
     font-size:clamp(3rem,12vw,9rem);letter-spacing:-.04em;line-height:1;
     color:var(--ink);
   }
-  .load-bar{width:min(280px,60vw);height:2px;background:rgba(255,255,255,.12);overflow:hidden}
+  .load-bar{width:min(280px,60vw);height:2px;background:var(--surface-soft);overflow:hidden}
   .load-bar > i{display:block;height:100%;width:0;background:var(--accent);box-shadow:0 0 12px var(--accent)}
   .load-label{font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-soft)}
 
@@ -61,25 +102,36 @@
     border-bottom:1px solid transparent;
   }
   header.nav.solid{
-    background:rgba(6,7,11,.72);
+    background:var(--solid-nav);
     backdrop-filter:blur(14px);
     padding:14px clamp(20px,4vw,56px);
     border-bottom:1px solid var(--line);
   }
-  .brand{font-family:"Space Grotesk";font-weight:700;font-size:20px;display:flex;align-items:center;gap:10px}
-  .brand .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 14px var(--accent)}
+  .brand{font-family:"Pretendard";font-weight:700;font-size:20px;display:flex;align-items:center;gap:10px}
   .nav-menu{display:flex;gap:clamp(16px,2.2vw,34px);list-style:none}
   .nav-menu a{font-size:14px;font-weight:500;color:var(--ink-soft);transition:color .25s}
   .nav-menu a:hover{color:var(--ink)}
-  .nav-actions{display:flex;align-items:center;gap:18px}
+  .nav-actions{display:flex;align-items:center;gap:14px}
   .nav-login{font-size:14px;color:var(--ink-soft);transition:color .25s}
   .nav-login:hover{color:var(--ink)}
   .nav-cta{
-    font-size:13.5px;font-weight:600;color:#05121a;
+    font-size:13.5px;font-weight:600;color:var(--accent-contrast);
     background:var(--accent);padding:10px 20px;border-radius:999px;
+    display:inline-flex;align-items:center;gap:8px;
     transition:transform .2s var(--ease),box-shadow .25s;
   }
-  .nav-cta:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(108,224,255,.35)}
+  .nav-cta:hover{transform:translateY(-2px);box-shadow:0 10px 28px var(--accent-glow)}
+
+  /* theme toggle */
+  .theme-toggle{
+    width:38px;height:38px;border-radius:50%;
+    display:inline-flex;align-items:center;justify-content:center;
+    background:var(--surface-soft);border:1px solid var(--line);
+    color:var(--ink);font-size:15px;cursor:pointer;
+    transition:border-color .25s,background .25s,color .25s,transform .2s var(--ease);
+  }
+  .theme-toggle:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px)}
+  .theme-toggle:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 
   /* ============ SECTIONS ============ */
   .panel{
@@ -97,9 +149,15 @@
       radial-gradient(60% 70% at 85% 75%, hsla(calc(var(--h) + 40),70%,45%,.32), transparent 62%),
       linear-gradient(160deg,#05060a 10%, hsla(var(--h),40%,10%,1) 120%);
   }
+  html[data-theme="light"] .panel .bg{
+    background:
+      radial-gradient(70% 80% at var(--bx,25%) 30%, hsla(var(--h),90%,80%,.35), transparent 60%),
+      radial-gradient(60% 70% at 85% 75%, hsla(calc(var(--h) + 40),85%,78%,.28), transparent 62%),
+      linear-gradient(160deg,#ffffff 10%, hsla(var(--h),55%,95%,1) 120%);
+  }
   .panel .grain{
     position:absolute;inset:0;z-index:1;pointer-events:none;opacity:.5;
-    background:radial-gradient(120% 90% at 50% 50%, transparent 40%, rgba(0,0,0,.55) 100%);
+    background:radial-gradient(120% 90% at 50% 50%, transparent 40%, var(--grain) 100%);
   }
   .panel .inner{position:relative;z-index:2;max-width:1100px;width:100%}
 
@@ -108,17 +166,17 @@
     font-size:12.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-soft);
     margin-bottom:clamp(18px,3vw,30px);
   }
-  .eyebrow .idx{color:var(--accent);font-family:"Space Grotesk";font-weight:700}
+  .eyebrow .idx{color:var(--accent);font-family:"Pretendard";font-weight:700}
   .eyebrow .ln{width:42px;height:1px;background:var(--line)}
 
   .statement{
-    font-family:"Space Grotesk";font-weight:700;
+    font-family:"Pretendard";font-weight:700;
     font-size:clamp(2.3rem,7vw,6rem);
     line-height:1.04;letter-spacing:-.035em;
     max-width:16ch;
   }
   .statement .grad{
-    background:linear-gradient(100deg,var(--accent),#bdecff 70%,#fff);
+    background:linear-gradient(100deg,var(--grad-1),var(--grad-2) 60%,var(--grad-3));
     -webkit-background-clip:text;background-clip:text;color:transparent;
   }
   .lead{
@@ -131,10 +189,10 @@
     display:inline-flex;align-items:center;gap:10px;
     font-size:15px;font-weight:600;color:var(--ink);
     padding:14px 26px;border:1px solid var(--line);border-radius:999px;
-    background:rgba(255,255,255,.03);
+    background:var(--surface-softer);
     transition:border-color .25s,background .25s,transform .2s var(--ease);
   }
-  .panel .cta:hover{border-color:var(--accent);background:rgba(108,224,255,.08);transform:translateY(-2px)}
+  .panel .cta:hover{border-color:var(--accent);background:var(--accent-glow);transform:translateY(-2px)}
   .panel .cta .arrow{transition:transform .2s var(--ease)}
   .panel .cta:hover .arrow{transform:translateX(4px)}
 
@@ -150,10 +208,10 @@
     display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(20px,3vw,50px);
     width:100%;max-width:1100px;
   }
-  .stat .v{font-family:"Space Grotesk";font-weight:700;font-size:clamp(2.4rem,5.5vw,4.6rem);letter-spacing:-.03em;line-height:1}
+  .stat{padding-top:22px;border-top:1px solid var(--line)}
+  .stat .v{font-family:"Pretendard";font-weight:700;font-size:clamp(2.4rem,5.5vw,4.6rem);letter-spacing:-.03em;line-height:1}
   .stat .v .suffix{color:var(--accent);font-size:.5em;vertical-align:.35em;margin-left:.1em}
   .stat .k{margin-top:12px;font-size:14px;color:var(--ink-soft);letter-spacing:.02em}
-  .stat{padding-top:22px;border-top:1px solid var(--line)}
 
   /* ============ FOOTER / FINAL ============ */
   .final .statement{max-width:20ch}
@@ -161,7 +219,7 @@
     border-top:1px solid var(--line);
     padding:clamp(40px,6vw,70px) clamp(20px,6vw,90px) 40px;
     display:flex;flex-wrap:wrap;gap:24px;justify-content:space-between;align-items:center;
-    background:#04050a;
+    background:var(--footer-bg);
   }
   .foot .brand{font-size:18px}
   .foot .copy{font-size:13px;color:var(--ink-soft);max-width:46ch;line-height:1.6;margin-top:8px}
@@ -175,7 +233,7 @@
   #fp-nav ul li a.active span,
   #fp-nav ul li:hover a.active span{background:var(--accent);box-shadow:0 0 12px var(--accent)}
   #fp-nav ul li a span{transition:background .3s var(--ease)}
-  #fp-nav ul li .fp-tooltip{font-family:"Inter";color:var(--ink-soft)}
+  #fp-nav ul li .fp-tooltip{font-family:"Pretendard";color:var(--ink-soft)}
 
   /* ============ RESPONSIVE ============ */
   @media (max-width:880px){
@@ -188,69 +246,131 @@
     *{animation:none!important}
     .rv{opacity:1;transform:none;transition:none}
     #loader{transition:none}
+    body{transition:none}
   }
 
   /* ============ UXBOT widget ============ */
   #uxbot-toggle{
     position:fixed;right:clamp(18px,3vw,34px);bottom:clamp(18px,3vw,34px);z-index:300;
     display:inline-flex;align-items:center;gap:10px;
-    background:var(--accent);color:#05121a;font-weight:600;font-size:14px;font-family:"Inter",sans-serif;
+    background:var(--accent);color:var(--accent-contrast);font-weight:600;font-size:14px;font-family:"Pretendard",sans-serif;
     padding:13px 20px;border:none;border-radius:999px;cursor:pointer;
-    box-shadow:0 14px 40px rgba(108,224,255,.4);
+    box-shadow:0 14px 40px var(--accent-glow);
     transition:transform .2s var(--ease),box-shadow .25s;
   }
-  #uxbot-toggle:hover{transform:translateY(-3px);box-shadow:0 18px 50px rgba(108,224,255,.55)}
-  #uxbot-toggle .ping{width:9px;height:9px;border-radius:50%;background:#05121a;position:relative}
-  #uxbot-toggle .ping::after{content:"";position:absolute;inset:0;border-radius:50%;background:#05121a;animation:ping 1.8s var(--ease) infinite}
-  @keyframes ping{0%{transform:scale(1);opacity:.7}100%{transform:scale(3.2);opacity:0}}
+  #uxbot-toggle:hover{transform:translateY(-3px);box-shadow:0 18px 50px var(--accent-glow)}
+  #uxbot-toggle i{font-size:15px}
 
   #uxbot-panel{
     position:fixed;right:clamp(18px,3vw,34px);bottom:calc(clamp(18px,3vw,34px) + 60px);z-index:300;
     width:min(380px,calc(100vw - 36px));height:min(560px,calc(100vh - 140px));
-    display:flex;flex-direction:column;overflow:hidden;
-    background:#0c0e14;border:1px solid var(--line);border-radius:18px;
-    box-shadow:0 24px 70px rgba(0,0,0,.6);
+    display:flex;overflow:hidden;
+    background:var(--surface);border:1px solid var(--line);border-radius:18px;
+    box-shadow:0 24px 70px rgba(0,0,0,.45);
     opacity:0;visibility:hidden;transform:translateY(16px) scale(.98);
-    transition:opacity .3s var(--ease),transform .3s var(--ease),visibility .3s var(--ease);
+    transition:opacity .3s var(--ease),transform .35s var(--ease),visibility .3s var(--ease),width .35s var(--ease),height .35s var(--ease);
   }
   #uxbot-panel.open{opacity:1;visibility:visible;transform:none}
+  #uxbot-panel.expanded{right:auto;bottom:auto;left:50%;top:50%;width:min(980px,92vw);height:min(680px,86vh)}
+  #uxbot-panel.expanded.open{transform:translate(-50%,-50%)}
+  .uxbot-main{display:flex;flex-direction:column;flex:1 1 auto;min-width:0;min-height:0}
+
+  /* ===== expand-to-center: backdrop + sidebar (2-pane) ===== */
+  #uxbot-backdrop{
+    position:fixed;inset:0;z-index:290;background:rgba(6,8,14,.55);
+    opacity:0;visibility:hidden;
+    transition:opacity .3s var(--ease),visibility .3s var(--ease);
+  }
+  #uxbot-backdrop.show{opacity:1;visibility:visible}
+
+  .uxbot-side{
+    display:none;flex:0 0 212px;flex-direction:column;gap:6px;
+    padding:16px;border-right:1px solid var(--line);background:var(--surface-soft);
+  }
+  #uxbot-panel.expanded .uxbot-side{display:flex}
+  .uxbot-side-title{font-family:"Pretendard";font-weight:700;font-size:13px;color:var(--ink-soft);letter-spacing:.04em;padding:4px 6px 8px}
+  .uxbot-topics{display:flex;flex-direction:column;gap:2px;flex:1;overflow-y:auto}
+  .uxbot-topic{
+    text-align:left;background:none;border:none;color:var(--ink-soft);
+    font-family:"Pretendard";font-size:13.5px;padding:10px 11px;border-radius:9px;cursor:pointer;
+    transition:background .2s,color .2s;
+  }
+  .uxbot-topic:hover{background:var(--surface-softer);color:var(--ink)}
+  .uxbot-topic:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .uxbot-newchat{
+    margin-top:8px;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    background:none;border:1px solid var(--line);color:var(--ink);
+    font-family:"Pretendard";font-size:13.5px;padding:10px 12px;border-radius:10px;cursor:pointer;
+    transition:border-color .2s,background .2s;
+  }
+  .uxbot-newchat:hover{border-color:var(--accent);background:var(--accent-glow)}
+  .uxbot-newchat:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  .uxbot-head-actions{display:flex;align-items:center;gap:4px}
+  #uxbot-expand{background:none;border:none;color:var(--ink-soft);font-size:15px;line-height:1;cursor:pointer;padding:6px;border-radius:8px}
+  #uxbot-expand:hover{color:var(--ink)}
+  #uxbot-expand:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  @media (max-width:640px){
+    #uxbot-panel.expanded{width:96vw;height:90vh}
+    #uxbot-panel.expanded .uxbot-side{display:none}
+  }
+
   .uxbot-head{
     display:flex;align-items:center;justify-content:space-between;gap:10px;
-    padding:16px 18px;border-bottom:1px solid var(--line);background:rgba(108,224,255,.06);
+    padding:16px 18px;border-bottom:1px solid var(--line);background:var(--surface-soft);
   }
-  .uxbot-head .title{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:15px;display:flex;align-items:center;gap:9px}
-  .uxbot-head .title .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px var(--accent)}
+  .uxbot-head .title{font-family:"Pretendard",sans-serif;font-weight:700;font-size:15px;display:flex;align-items:center;gap:9px}
   .uxbot-head .sub{font-size:11.5px;color:var(--ink-soft);margin-top:2px}
-  #uxbot-close{background:none;border:none;color:var(--ink-soft);font-size:20px;line-height:1;cursor:pointer;padding:4px;border-radius:8px}
+  #uxbot-close{background:none;border:none;color:var(--ink-soft);font-size:18px;line-height:1;cursor:pointer;padding:4px;border-radius:8px}
   #uxbot-close:hover{color:var(--ink)}
 
   #uxbot-log{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:12px}
+  /* chat log: overlay scrollbar — hidden until the panel is hovered, accent on grab */
+  #uxbot-log{scrollbar-width:thin;scrollbar-color:transparent transparent;transition:scrollbar-color .3s var(--ease)}
+  #uxbot-panel:hover #uxbot-log{scrollbar-color:var(--line) transparent}
+  #uxbot-log::-webkit-scrollbar{width:7px}
+  #uxbot-log::-webkit-scrollbar-track{background:transparent;margin:6px 0}
+  #uxbot-log::-webkit-scrollbar-thumb{
+    background:transparent;border-radius:999px;
+    border:2px solid transparent;background-clip:padding-box;
+    transition:background .3s var(--ease);
+  }
+  #uxbot-panel:hover #uxbot-log::-webkit-scrollbar-thumb{background:var(--line);background-clip:padding-box}
+  #uxbot-log::-webkit-scrollbar-thumb:hover{background:var(--accent);background-clip:padding-box}
   .uxbot-msg{max-width:84%;padding:11px 14px;border-radius:14px;font-size:14px;line-height:1.55;white-space:pre-wrap;word-break:break-word}
-  .uxbot-msg.bot{align-self:flex-start;background:rgba(255,255,255,.05);color:var(--ink);border:1px solid var(--line);border-bottom-left-radius:4px}
-  .uxbot-msg.user{align-self:flex-end;background:var(--accent);color:#05121a;font-weight:500;border-bottom-right-radius:4px}
+  .uxbot-msg.bot{align-self:flex-start;background:var(--surface-soft);color:var(--ink);border:1px solid var(--line);border-bottom-left-radius:4px}
+  .uxbot-msg.user{align-self:flex-end;background:var(--accent);color:var(--accent-contrast);font-weight:500;border-bottom-right-radius:4px}
   .uxbot-typing{align-self:flex-start;color:var(--ink-soft);font-size:13px;padding:4px 6px}
   .uxbot-typing span{display:inline-block;width:6px;height:6px;margin:0 1px;border-radius:50%;background:var(--ink-soft);animation:uxblink 1.2s infinite}
   .uxbot-typing span:nth-child(2){animation-delay:.2s}
   .uxbot-typing span:nth-child(3){animation-delay:.4s}
   @keyframes uxblink{0%,60%,100%{opacity:.3}30%{opacity:1}}
 
-  #uxbot-quick{display:flex;flex-wrap:wrap;gap:8px;padding:0 18px 12px}
+  /* quick replies: single horizontally-scrollable row to keep the chat log tall */
+  #uxbot-quick{display:flex;flex-wrap:nowrap;gap:8px;padding:8px 18px 10px;overflow-x:auto;scrollbar-width:none;cursor:grab;user-select:none;-webkit-user-select:none;scroll-behavior:smooth;-webkit-overflow-scrolling:touch}
+  #uxbot-quick:active{cursor:grabbing}
+  #uxbot-quick.dragscroll{scroll-behavior:auto}
+  #uxbot-quick::-webkit-scrollbar{display:none}
+  #uxbot-quick:empty{display:none}
   .uxbot-chip{
-    font-size:12.5px;color:var(--ink);background:rgba(255,255,255,.04);
+    flex:0 0 auto;white-space:nowrap;
+    font-size:12.5px;color:var(--ink);background:var(--surface-softer);
     border:1px solid var(--line);border-radius:999px;padding:8px 13px;cursor:pointer;
     transition:border-color .2s,background .2s;
   }
-  .uxbot-chip:hover{border-color:var(--accent);background:rgba(108,224,255,.08)}
+  .uxbot-chip:hover{border-color:var(--accent);background:var(--accent-glow)}
 
   #uxbot-form{display:flex;gap:9px;padding:14px 16px;border-top:1px solid var(--line)}
   #uxbot-input{
-    flex:1;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:12px;
-    color:var(--ink);font-size:14px;font-family:"Inter",sans-serif;padding:11px 14px;outline:none;
+    flex:1;background:var(--surface-soft);border:1px solid var(--line);border-radius:12px;
+    color:var(--ink);font-size:14px;font-family:"Pretendard",sans-serif;padding:11px 14px;outline:none;
   }
-  #uxbot-input:focus-visible{border-color:var(--accent);outline:2px solid var(--accent);outline-offset:2px}
+  #uxbot-input:focus-visible{border-color:var(--accent);outline:2px solid var(--accent)}
   #uxbot-send{
-    background:var(--accent);color:#05121a;border:none;border-radius:12px;
+    background:var(--accent);color:var(--accent-contrast);border:none;border-radius:12px;
     font-weight:600;font-size:14px;padding:0 16px;cursor:pointer;
+    display:inline-flex;align-items:center;gap:7px;
   }
   #uxbot-send:disabled{opacity:.5;cursor:default}
 
@@ -259,17 +379,28 @@
   }
 
   @media (prefers-reduced-motion:reduce){
-    #uxbot-toggle .ping::after{display:none}
-    #uxbot-panel{transition:opacity .01s,visibility .01s;transform:none}
+    #uxbot-panel{transition:opacity .01s,visibility .01s}
+    #uxbot-backdrop{transition:opacity .01s,visibility .01s}
     .uxbot-typing span{animation:none}
   }
+
+  /* ============ Hero three.js particle wave ============ */
+  #hero-gl{
+    position:absolute;inset:0;z-index:1;
+    width:100%;height:100%;display:block;
+    pointer-events:none;
+  }
 </style>
+<script>
+  /* anti-FOUC: apply saved theme before first paint */
+  (function(){ try{ if(localStorage.getItem("inswave-theme")==="light"){ document.documentElement.setAttribute("data-theme","light"); } }catch(e){} })();
+</script>
 </head>
 <body>
 
   <!-- ============ LOADER ============ -->
   <div id="loader" aria-hidden="true">
-    <div class="load-brand"><span class="dot"></span>inswave</div>
+    <div class="load-brand">inswave</div>
     <div class="load-num"><span id="loadNum">0</span></div>
     <div class="load-bar"><i id="loadBar"></i></div>
     <div class="load-label">AI 혁신의 물결</div>
@@ -277,7 +408,7 @@
 
   <!-- ============ NAV ============ -->
   <header class="nav" id="nav">
-    <a class="brand" href="#s1"><span class="dot"></span>inswave</a>
+    <a class="brand" href="#s1">inswave</a>
     <ul class="nav-menu">
       <li><a href="#s2">제품</a></li>
       <li><a href="#s3">WebSquare AI</a></li>
@@ -285,6 +416,7 @@
       <li><a href="#s5">회사소개</a></li>
     </ul>
     <div class="nav-actions">
+      <button id="theme-toggle" class="theme-toggle" type="button" aria-label="라이트 테마로 전환"><i class="fa-solid fa-sun" aria-hidden="true"></i></button>
       <a class="nav-login" href="#">로그인</a>
       <a class="nav-cta" href="#contact">도입 문의</a>
     </div>
@@ -294,14 +426,15 @@
   <div id="fullpage">
 
     <!-- 1 · HERO -->
-    <section class="panel section" data-anchor="s1" style="--h:200">
+    <section class="panel section" id="s1" data-anchor="s1" style="--h:200">
       <div class="bg" aria-hidden="true"></div>
+      <canvas id="hero-gl" aria-hidden="true"></canvas>
       <div class="grain" aria-hidden="true"></div>
       <div class="inner">
         <span class="eyebrow rv"><span class="idx">01</span><span class="ln"></span>AI 혁신의 물결</span>
         <h1 class="statement rv d1">엔터프라이즈 UI의 <span class="grad">미래를 만듭니다.</span></h1>
         <p class="lead rv d2">2002년 국내 최초로 웹 표준 UI/UX 개발 플랫폼을 선보인 인스웨이브시스템즈. 금융·공공·기업의 화면을 더 빠르고, 더 똑똑하게.</p>
-        <a class="cta rv d3" href="#s2">프로젝트 둘러보기 <span class="arrow">→</span></a>
+        <a class="cta rv d3" href="#s2">프로젝트 둘러보기 <i class="fa-solid fa-arrow-right arrow" aria-hidden="true"></i></a>
       </div>
     </section>
 
@@ -313,7 +446,7 @@
         <span class="eyebrow rv"><span class="idx">02</span><span class="ln"></span>Innovation</span>
         <h2 class="statement rv d1">개발의 방식을 <span class="grad">새로 정의합니다.</span></h2>
         <p class="lead rv d2">생성형 AI 기반 UI 자동 생성으로 화면 설계부터 코드까지. 반복은 줄이고, 완성도는 높이는 차세대 개발 경험을 제시합니다.</p>
-        <a class="cta rv d3" href="#s3">WebSquare AI 알아보기 <span class="arrow">→</span></a>
+        <a class="cta rv d3" href="#s3">WebSquare AI 알아보기 <i class="fa-solid fa-arrow-right arrow" aria-hidden="true"></i></a>
       </div>
     </section>
 
@@ -325,7 +458,7 @@
         <span class="eyebrow rv"><span class="idx">03</span><span class="ln"></span>Platform</span>
         <h2 class="statement rv d1">하나의 플랫폼으로 <span class="grad">모든 화면을.</span></h2>
         <p class="lead rv d2">WebSquare AI, ProWorks5, W-Matrix, WebTop까지 — 웹·앱·금융 단말을 아우르는 통합 UI/UX 플랫폼으로 전 채널을 일관되게 구축합니다.</p>
-        <a class="cta rv d3" href="#s4">제품군 보기 <span class="arrow">→</span></a>
+        <a class="cta rv d3" href="#s4">제품군 보기 <i class="fa-solid fa-arrow-right arrow" aria-hidden="true"></i></a>
       </div>
     </section>
 
@@ -352,7 +485,7 @@
         <span class="eyebrow rv"><span class="idx">05</span><span class="ln"></span>Together</span>
         <h2 class="statement rv d1">내일의 디지털을 <span class="grad">함께 설계합니다.</span></h2>
         <p class="lead rv d2">금융과 공공, 그리고 기업의 디지털 전환 — 그 화면 너머의 혁신을 인스웨이브시스템즈가 함께합니다.</p>
-        <a class="cta rv d3" href="#contact">도입 문의하기 <span class="arrow">→</span></a>
+        <a class="cta rv d3" href="#contact">도입 문의하기 <i class="fa-solid fa-arrow-right arrow" aria-hidden="true"></i></a>
       </div>
     </section>
 
@@ -360,7 +493,7 @@
     <section class="section fp-auto-height" data-anchor="contact">
       <footer class="foot">
         <div>
-          <div class="brand"><span class="dot"></span>inswave</div>
+          <div class="brand">inswave</div>
           <p class="copy">인스웨이브시스템즈 · 2002년 국내 최초 웹 표준 UI/UX 개발 플랫폼 전문기업. 생성형 AI 기반 UI 자동 생성 WebSquare AI.</p>
         </div>
         <div class="links">
@@ -376,22 +509,33 @@
 
   <!-- ============ UXBOT widget ============ -->
   <button id="uxbot-toggle" type="button" aria-expanded="false" aria-controls="uxbot-panel" aria-label="UX 담당 챗봇 열기">
-    <span class="ping" aria-hidden="true"></span>UX 상담봇
+    <i class="fa-solid fa-headset" aria-hidden="true"></i> UX 상담봇
   </button>
+  <div id="uxbot-backdrop" aria-hidden="true"></div>
   <section id="uxbot-panel" role="dialog" aria-modal="false" aria-label="UX 담당 챗봇" aria-hidden="true">
-    <header class="uxbot-head">
-      <div>
-        <div class="title"><span class="dot"></span>UX 담당봇</div>
-        <div class="sub">UX 컨설팅 문의를 도와드려요</div>
-      </div>
-      <button id="uxbot-close" type="button" aria-label="챗봇 닫기">&times;</button>
-    </header>
-    <div id="uxbot-log" aria-live="polite"></div>
-    <div id="uxbot-quick"></div>
-    <form id="uxbot-form" autocomplete="off">
-      <input id="uxbot-input" type="text" placeholder="궁금한 점을 입력하세요…" aria-label="메시지 입력" />
-      <button id="uxbot-send" type="submit">전송</button>
-    </form>
+    <aside class="uxbot-side" aria-label="대화 주제">
+      <div class="uxbot-side-title">대화 주제</div>
+      <nav id="uxbot-topics" class="uxbot-topics" aria-label="주제 바로가기"></nav>
+      <button id="uxbot-newchat" class="uxbot-newchat" type="button"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> 새 대화</button>
+    </aside>
+    <div class="uxbot-main">
+      <header class="uxbot-head">
+        <div>
+          <div class="title">UX 담당봇</div>
+          <div class="sub">UX 컨설팅 문의를 도와드려요</div>
+        </div>
+        <div class="uxbot-head-actions">
+          <button id="uxbot-expand" type="button" aria-label="가운데로 확장"><i class="fa-solid fa-up-right-and-down-left-from-center" aria-hidden="true"></i></button>
+          <button id="uxbot-close" type="button" aria-label="챗봇 닫기"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+        </div>
+      </header>
+      <div id="uxbot-log" aria-live="polite"></div>
+      <div id="uxbot-quick" class="dragscroll"></div>
+      <form id="uxbot-form" autocomplete="off">
+        <input id="uxbot-input" type="text" placeholder="궁금한 점을 입력하세요…" aria-label="메시지 입력" />
+        <button id="uxbot-send" type="submit">전송 <i class="fa-solid fa-paper-plane" aria-hidden="true"></i></button>
+      </form>
+    </div>
   </section>
 
   <!-- ============ UXBOT: knowledge base + intent matcher ============ -->
@@ -515,6 +659,11 @@
     var form = document.getElementById("uxbot-form");
     var input = document.getElementById("uxbot-input");
     var sendBtn = document.getElementById("uxbot-send");
+    var expandBtn = document.getElementById("uxbot-expand");
+    var backdrop = document.getElementById("uxbot-backdrop");
+    var topicsNav = document.getElementById("uxbot-topics");
+    var newChatBtn = document.getElementById("uxbot-newchat");
+    var expanded = false;
 
     var kb = window.UXBOT_KB;
     var history = [];
@@ -586,8 +735,32 @@
         busy = false;
         sendBtn.disabled = false;
         renderQuickReplies();         // restore chips for next turn
+        // chips re-appearing shrinks the log — re-pin to bottom so the last
+        // answer isn't cut off behind the quick-reply row
+        scrollDown();
+        if (window.requestAnimationFrame) requestAnimationFrame(scrollDown);
         input.focus();
       });
+    }
+
+    function fpScroll(allow){
+      if (window.fullpage_api) {
+        try { window.fullpage_api.setAllowScrolling(allow); window.fullpage_api.setKeyboardScrolling(allow); } catch (e) {}
+      }
+    }
+    function setExpanded(on){
+      expanded = on;
+      panel.classList.toggle("expanded", on);
+      backdrop.classList.toggle("show", on);
+      panel.setAttribute("aria-modal", on ? "true" : "false");
+      expandBtn.setAttribute("aria-label", on ? "원래 크기로 축소" : "가운데로 확장");
+      var ic = expandBtn.querySelector("i");
+      if (ic) ic.className = on
+        ? "fa-solid fa-down-left-and-up-right-to-center"
+        : "fa-solid fa-up-right-and-down-left-from-center";
+      fpScroll(!on);            // lock background scroll while modal is open
+      if (on && input) input.focus();
+      else if (!on && expandBtn) expandBtn.focus();
     }
 
     function openPanel(){
@@ -598,6 +771,7 @@
       input.focus();
     }
     function closePanel(){
+      if (expanded) setExpanded(false);
       panel.classList.remove("open");
       panel.setAttribute("aria-hidden", "true");
       toggle.setAttribute("aria-expanded", "false");
@@ -608,13 +782,237 @@
       if (panel.classList.contains("open")) closePanel(); else openPanel();
     });
     closeBtn.addEventListener("click", closePanel);
+    expandBtn.addEventListener("click", function(){ setExpanded(!expanded); });
+    backdrop.addEventListener("click", function(){ setExpanded(false); });
+
     document.addEventListener("keydown", function(e){
-      if (e.key === "Escape" && panel.classList.contains("open")) closePanel();
+      if (e.key !== "Escape" || !panel.classList.contains("open")) return;
+      if (expanded) setExpanded(false); else closePanel();
+    });
+
+    // focus trap — only while expanded (modal)
+    panel.addEventListener("keydown", function(e){
+      if (!expanded || e.key !== "Tab") return;
+      var sel = 'a[href],button:not([disabled]),input,textarea,select,[tabindex]:not([tabindex="-1"])';
+      var nodes = Array.prototype.slice.call(panel.querySelectorAll(sel)).filter(function(el){ return el.offsetParent !== null; });
+      if (!nodes.length) return;
+      var first = nodes[0], last = nodes[nodes.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
     });
     form.addEventListener("submit", function(e){
       e.preventDefault();
       send(input.value);
     });
+
+    // sidebar: topic shortcuts + new chat (expanded 2-pane)
+    var TOPICS = [
+      { label: "서비스 소개", q: "UX 컨설팅이 뭔가요?" },
+      { label: "진행 절차",   q: "진행 절차가 궁금해요" },
+      { label: "기간·비용",   q: "기간과 비용은 어떻게 되나요?" },
+      { label: "원격 진행",   q: "원격으로도 진행되나요?" },
+      { label: "산출물",      q: "어떤 산출물을 받게 되나요?" },
+      { label: "도입 문의",   q: "상담 신청하고 싶어요" }
+    ];
+    function renderTopics(){
+      if (!topicsNav) return;
+      topicsNav.innerHTML = "";
+      TOPICS.forEach(function(t){
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "uxbot-topic";
+        b.textContent = t.label;
+        b.addEventListener("click", function(){ if (!busy) send(t.q); });
+        topicsNav.appendChild(b);
+      });
+    }
+    function resetChat(){
+      if (busy) return;
+      log.innerHTML = "";
+      history.length = 0;
+      greeted = false;
+      greet();
+    }
+    if (newChatBtn) newChatBtn.addEventListener("click", resetChat);
+    renderTopics();
+  })();
+  </script>
+
+  <!-- ============ THEME TOGGLE (light / dark) ============ -->
+  <script>
+  (function(){
+    "use strict";
+    var KEY = "inswave-theme";
+    var btn = document.getElementById("theme-toggle");
+    var root = document.documentElement;
+    if (!btn) return;
+
+    function isLight(){ return root.getAttribute("data-theme") === "light"; }
+
+    function syncIcon(){
+      var i = btn.querySelector("i");
+      var light = isLight();
+      if (i){ i.className = light ? "fa-solid fa-moon" : "fa-solid fa-sun"; }
+      btn.setAttribute("aria-label", light ? "다크 테마로 전환" : "라이트 테마로 전환");
+    }
+    syncIcon();
+
+    btn.addEventListener("click", function(){
+      var nextLight = !isLight();
+      if (nextLight) root.setAttribute("data-theme", "light");
+      else root.removeAttribute("data-theme");
+      try { localStorage.setItem(KEY, nextLight ? "light" : "dark"); } catch(e){}
+      syncIcon();
+    });
+  })();
+  </script>
+
+  <!-- dragscroll: drag/swipe horizontal scrolling for the quick-reply row (~1KB) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dragscroll/0.0.8/dragscroll.min.js" referrerpolicy="no-referrer"></script>
+  <!-- guard: suppress the click that fires right after a drag-scroll ends on a chip -->
+  <script>
+  (function(){
+    "use strict";
+    var row = document.getElementById("uxbot-quick");
+    if (!row) return;
+    var THRESH = 6;            // px of movement that counts as a drag (not a tap)
+    var down = false, moved = false, sx = 0, sy = 0;
+
+    row.addEventListener("pointerdown", function(e){
+      down = true; moved = false; sx = e.clientX; sy = e.clientY;
+    });
+    row.addEventListener("pointermove", function(e){
+      if (!down) return;
+      if (Math.abs(e.clientX - sx) > THRESH || Math.abs(e.clientY - sy) > THRESH) moved = true;
+    });
+    window.addEventListener("pointerup", function(){ down = false; });
+
+    // Capture phase: if the gesture was a drag, swallow the click before it reaches the chip.
+    row.addEventListener("click", function(e){
+      if (moved) { e.stopPropagation(); e.preventDefault(); moved = false; }
+    }, true);
+  })();
+  </script>
+
+  <!-- three.js r160 (UMD) — Hero particle wave -->
+  <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+
+  <!-- Hero: particle wave (three.js) -->
+  <script>
+  (function(){
+    "use strict";
+    var canvas = document.getElementById("hero-gl");
+    if (!canvas || typeof THREE === "undefined") { if (canvas) canvas.style.display = "none"; return; }
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { canvas.style.display = "none"; return; }
+
+    var COLS = 120, ROWS = 70, GAP = 0.18;
+    var renderer, scene, camera, geometry, material, points;
+    var raf = null, running = false, t0 = null;
+    var mouse = { x: 0, y: 0 }, target = { x: 0, y: 0 };
+    function accentColor(){
+      var c = getComputedStyle(document.documentElement).getPropertyValue("--accent").trim();
+      return c || "#6ce0ff";
+    }
+
+    function vw(){ return window.innerWidth; }
+    function vh(){ return window.innerHeight; }
+
+    function init(){
+      try {
+        renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+      } catch (e) { canvas.style.display = "none"; return false; }
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(60, vw() / vh(), 0.1, 100);
+      camera.position.set(0, 2.2, 9);
+      camera.lookAt(0, 0, 0);
+
+      var n = COLS * ROWS;
+      var positions = new Float32Array(n * 3);
+      var i = 0;
+      for (var z = 0; z < ROWS; z++) {
+        for (var x = 0; x < COLS; x++) {
+          positions[i++] = (x - COLS / 2) * GAP;
+          positions[i++] = 0;
+          positions[i++] = (z - ROWS / 2) * GAP;
+        }
+      }
+      geometry = new THREE.BufferGeometry();
+      geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+
+      material = new THREE.PointsMaterial({
+        color: new THREE.Color(accentColor()), size: 0.025, sizeAttenuation: true,
+        transparent: true, opacity: 0.55, depthWrite: false
+      });
+      points = new THREE.Points(geometry, material);
+      scene.add(points);
+
+      resize();
+      return true;
+    }
+
+    function resize(){
+      if (!renderer) return;
+      renderer.setSize(vw(), vh(), false);
+      camera.aspect = vw() / vh();
+      camera.updateProjectionMatrix();
+    }
+
+    function frame(ts){
+      if (t0 === null) t0 = ts;
+      var t = (ts - t0) / 1000;
+      var pos = geometry.attributes.position.array;
+      var idx = 0;
+      for (var z = 0; z < ROWS; z++) {
+        for (var x = 0; x < COLS; x++) {
+          var px = (x - COLS / 2) * GAP, pz = (z - ROWS / 2) * GAP;
+          pos[idx * 3 + 1] = Math.sin(px * 0.6 + t * 0.9) * 0.35 + Math.cos(pz * 0.5 + t * 0.7) * 0.30;
+          idx++;
+        }
+      }
+      geometry.attributes.position.needsUpdate = true;
+      target.x += (mouse.x - target.x) * 0.04;
+      target.y += (mouse.y - target.y) * 0.04;
+      points.rotation.y = Math.sin(t * 0.05) * 0.08 + target.x * 0.25;
+      camera.position.x = target.x * 1.2;
+      camera.position.y = 2.2 - target.y * 0.8;
+      camera.lookAt(0, 0, 0);
+      renderer.render(scene, camera);
+      if (running) raf = requestAnimationFrame(frame);
+    }
+
+    function play(){ if (running) return; running = true; t0 = null; raf = requestAnimationFrame(frame); }
+    function pause(){ running = false; if (raf) cancelAnimationFrame(raf); raf = null; }
+
+    if (!init()) return;
+    window.addEventListener("resize", resize);
+    window.addEventListener("pointermove", function(e){
+      mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = (e.clientY / window.innerHeight) * 2 - 1;
+    }, { passive: true });
+
+    // theme-aware particle color
+    var mo = new MutationObserver(function(){ material.color.set(accentColor()); });
+    mo.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+    // play only while the hero is in view (works with fullPage transforms) and tab is visible
+    var heroVisible = false;
+    function refresh(){ if (heroVisible && !document.hidden) play(); else pause(); }
+    var hero = document.getElementById("s1");
+    if (hero && "IntersectionObserver" in window) {
+      var io = new IntersectionObserver(function(entries){
+        entries.forEach(function(en){ heroVisible = en.isIntersecting; });
+        refresh();
+      }, { threshold: 0.05 });
+      io.observe(hero);
+    } else {
+      heroVisible = true; // no IO: just run
+    }
+    document.addEventListener("visibilitychange", refresh);
+
+    window.__heroWave = { play: play, pause: pause };
+    refresh();
   })();
   </script>
 
