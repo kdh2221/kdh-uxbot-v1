@@ -5,14 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>inswave — AI 혁신의 물결</title>
 <meta name="description" content="2002년 국내 최초 웹 표준 UI/UX 개발 플랫폼 전문기업. WebSquare AI와 생성형 AI 기반 UI 자동 생성." />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
 <!-- Font Awesome 6 (free) via CDN — all icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer" />
 <!-- fullPage.js v4 (vanilla) -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullpage.js@4/dist/fullpage.min.css" />
 <style>
+  /* ============ Pretendard (local) ============ */
+  @font-face{font-family:"Pretendard";font-weight:400;font-style:normal;font-display:swap;src:url("font/pretendard/Pretendard-Regular.woff2") format("woff2")}
+  @font-face{font-family:"Pretendard";font-weight:500;font-style:normal;font-display:swap;src:url("font/pretendard/Pretendard-Medium.woff2") format("woff2")}
+  @font-face{font-family:"Pretendard";font-weight:700;font-style:normal;font-display:swap;src:url("font/pretendard/Pretendard-Bold.woff2") format("woff2")}
+
   :root{
     /* dark theme (default) */
     --bg:#06070b;
@@ -51,7 +53,7 @@
   body{
     background:var(--bg);
     color:var(--ink);
-    font-family:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    font-family:"Pretendard",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
     -webkit-font-smoothing:antialiased;
     overflow-x:hidden;
     transition:background .4s var(--ease), color .4s var(--ease);
@@ -79,11 +81,11 @@
   }
   #loader.done{opacity:0;visibility:hidden}
   .load-brand{
-    font-family:"Space Grotesk";font-weight:700;font-size:18px;letter-spacing:.02em;
+    font-family:"Pretendard";font-weight:700;font-size:18px;letter-spacing:.02em;
     display:flex;align-items:center;gap:10px;color:var(--ink);
   }
   .load-num{
-    font-family:"Space Grotesk";font-weight:700;
+    font-family:"Pretendard";font-weight:700;
     font-size:clamp(3rem,12vw,9rem);letter-spacing:-.04em;line-height:1;
     color:var(--ink);
   }
@@ -105,7 +107,7 @@
     padding:14px clamp(20px,4vw,56px);
     border-bottom:1px solid var(--line);
   }
-  .brand{font-family:"Space Grotesk";font-weight:700;font-size:20px;display:flex;align-items:center;gap:10px}
+  .brand{font-family:"Pretendard";font-weight:700;font-size:20px;display:flex;align-items:center;gap:10px}
   .nav-menu{display:flex;gap:clamp(16px,2.2vw,34px);list-style:none}
   .nav-menu a{font-size:14px;font-weight:500;color:var(--ink-soft);transition:color .25s}
   .nav-menu a:hover{color:var(--ink)}
@@ -164,11 +166,11 @@
     font-size:12.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-soft);
     margin-bottom:clamp(18px,3vw,30px);
   }
-  .eyebrow .idx{color:var(--accent);font-family:"Space Grotesk";font-weight:700}
+  .eyebrow .idx{color:var(--accent);font-family:"Pretendard";font-weight:700}
   .eyebrow .ln{width:42px;height:1px;background:var(--line)}
 
   .statement{
-    font-family:"Space Grotesk";font-weight:700;
+    font-family:"Pretendard";font-weight:700;
     font-size:clamp(2.3rem,7vw,6rem);
     line-height:1.04;letter-spacing:-.035em;
     max-width:16ch;
@@ -207,7 +209,7 @@
     width:100%;max-width:1100px;
   }
   .stat{padding-top:22px;border-top:1px solid var(--line)}
-  .stat .v{font-family:"Space Grotesk";font-weight:700;font-size:clamp(2.4rem,5.5vw,4.6rem);letter-spacing:-.03em;line-height:1}
+  .stat .v{font-family:"Pretendard";font-weight:700;font-size:clamp(2.4rem,5.5vw,4.6rem);letter-spacing:-.03em;line-height:1}
   .stat .v .suffix{color:var(--accent);font-size:.5em;vertical-align:.35em;margin-left:.1em}
   .stat .k{margin-top:12px;font-size:14px;color:var(--ink-soft);letter-spacing:.02em}
 
@@ -231,7 +233,7 @@
   #fp-nav ul li a.active span,
   #fp-nav ul li:hover a.active span{background:var(--accent);box-shadow:0 0 12px var(--accent)}
   #fp-nav ul li a span{transition:background .3s var(--ease)}
-  #fp-nav ul li .fp-tooltip{font-family:"Inter";color:var(--ink-soft)}
+  #fp-nav ul li .fp-tooltip{font-family:"Pretendard";color:var(--ink-soft)}
 
   /* ============ RESPONSIVE ============ */
   @media (max-width:880px){
@@ -251,7 +253,7 @@
   #uxbot-toggle{
     position:fixed;right:clamp(18px,3vw,34px);bottom:clamp(18px,3vw,34px);z-index:300;
     display:inline-flex;align-items:center;gap:10px;
-    background:var(--accent);color:var(--accent-contrast);font-weight:600;font-size:14px;font-family:"Inter",sans-serif;
+    background:var(--accent);color:var(--accent-contrast);font-weight:600;font-size:14px;font-family:"Pretendard",sans-serif;
     padding:13px 20px;border:none;border-radius:999px;cursor:pointer;
     box-shadow:0 14px 40px var(--accent-glow);
     transition:transform .2s var(--ease),box-shadow .25s;
@@ -273,7 +275,7 @@
     display:flex;align-items:center;justify-content:space-between;gap:10px;
     padding:16px 18px;border-bottom:1px solid var(--line);background:var(--surface-soft);
   }
-  .uxbot-head .title{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:15px;display:flex;align-items:center;gap:9px}
+  .uxbot-head .title{font-family:"Pretendard",sans-serif;font-weight:700;font-size:15px;display:flex;align-items:center;gap:9px}
   .uxbot-head .sub{font-size:11.5px;color:var(--ink-soft);margin-top:2px}
   #uxbot-close{background:none;border:none;color:var(--ink-soft);font-size:18px;line-height:1;cursor:pointer;padding:4px;border-radius:8px}
   #uxbot-close:hover{color:var(--ink)}
@@ -317,7 +319,7 @@
   #uxbot-form{display:flex;gap:9px;padding:14px 16px;border-top:1px solid var(--line)}
   #uxbot-input{
     flex:1;background:var(--surface-soft);border:1px solid var(--line);border-radius:12px;
-    color:var(--ink);font-size:14px;font-family:"Inter",sans-serif;padding:11px 14px;outline:none;
+    color:var(--ink);font-size:14px;font-family:"Pretendard",sans-serif;padding:11px 14px;outline:none;
   }
   #uxbot-input:focus-visible{border-color:var(--accent);outline:2px solid var(--accent)}
   #uxbot-send{
