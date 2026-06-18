@@ -768,6 +768,95 @@
   <!-- three.js r160 (UMD) — Hero particle wave -->
   <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
 
+  <!-- Hero: particle wave (three.js) -->
+  <script>
+  (function(){
+    "use strict";
+    var canvas = document.getElementById("hero-gl");
+    if (!canvas || typeof THREE === "undefined") { if (canvas) canvas.style.display = "none"; return; }
+
+    var COLS = 120, ROWS = 70, GAP = 0.18;
+    var renderer, scene, camera, geometry, material, points;
+    var raf = null, running = false, t0 = null;
+
+    function vw(){ return window.innerWidth; }
+    function vh(){ return window.innerHeight; }
+
+    function init(){
+      try {
+        renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+      } catch (e) { canvas.style.display = "none"; return false; }
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(60, vw() / vh(), 0.1, 100);
+      camera.position.set(0, 2.2, 9);
+      camera.lookAt(0, 0, 0);
+
+      var n = COLS * ROWS;
+      var positions = new Float32Array(n * 3);
+      var i = 0;
+      for (var z = 0; z < ROWS; z++) {
+        for (var x = 0; x < COLS; x++) {
+          positions[i++] = (x - COLS / 2) * GAP;
+          positions[i++] = 0;
+          positions[i++] = (z - ROWS / 2) * GAP;
+        }
+      }
+      geometry = new THREE.BufferGeometry();
+      geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+
+      material = new THREE.PointsMaterial({
+        color: 0x6ce0ff, size: 0.025, sizeAttenuation: true,
+        transparent: true, opacity: 0.55, depthWrite: false
+      });
+      points = new THREE.Points(geometry, material);
+      scene.add(points);
+
+      resize();
+      return true;
+    }
+
+    function resize(){
+      if (!renderer) return;
+      renderer.setSize(vw(), vh(), false);
+      camera.aspect = vw() / vh();
+      camera.updateProjectionMatrix();
+    }
+
+    function frame(ts){
+      if (t0 === null) t0 = ts;
+      var t = (ts - t0) / 1000;
+      var pos = geometry.attributes.position.array;
+      var idx = 0;
+      for (var z = 0; z < ROWS; z++) {
+        for (var x = 0; x < COLS; x++) {
+          var px = (x - COLS / 2) * GAP, pz = (z - ROWS / 2) * GAP;
+          pos[idx * 3 + 1] = Math.sin(px * 0.6 + t * 0.9) * 0.35 + Math.cos(pz * 0.5 + t * 0.7) * 0.30;
+          idx++;
+        }
+      }
+      geometry.attributes.position.needsUpdate = true;
+      points.rotation.y = Math.sin(t * 0.05) * 0.08;
+      renderer.render(scene, camera);
+      if (running) raf = requestAnimationFrame(frame);
+    }
+
+    function play(){ if (running) return; running = true; t0 = null; raf = requestAnimationFrame(frame); }
+    function pause(){ running = false; if (raf) cancelAnimationFrame(raf); raf = null; }
+
+    if (!init()) return;
+    window.addEventListener("resize", resize);
+
+    // exposed for Task 3 (interaction / play-pause control)
+    window.__heroWave = { play: play, pause: pause, _material: material, _resize: resize };
+
+    // Task 2: always-on render so the wave is visible during development.
+    // (Task 3 replaces this with view/visibility-gated play/pause.)
+    play();
+  })();
+  </script>
+
   <!-- fullPage.js v4 -->
   <script src="https://cdn.jsdelivr.net/npm/fullpage.js@4/dist/fullpage.min.js"></script>
   <script>
