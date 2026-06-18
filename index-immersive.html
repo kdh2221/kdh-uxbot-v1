@@ -264,13 +264,58 @@
   #uxbot-panel{
     position:fixed;right:clamp(18px,3vw,34px);bottom:calc(clamp(18px,3vw,34px) + 60px);z-index:300;
     width:min(380px,calc(100vw - 36px));height:min(560px,calc(100vh - 140px));
-    display:flex;flex-direction:column;overflow:hidden;
+    display:flex;overflow:hidden;
     background:var(--surface);border:1px solid var(--line);border-radius:18px;
     box-shadow:0 24px 70px rgba(0,0,0,.45);
     opacity:0;visibility:hidden;transform:translateY(16px) scale(.98);
-    transition:opacity .3s var(--ease),transform .3s var(--ease),visibility .3s var(--ease);
+    transition:opacity .3s var(--ease),transform .35s var(--ease),visibility .3s var(--ease),width .35s var(--ease),height .35s var(--ease);
   }
   #uxbot-panel.open{opacity:1;visibility:visible;transform:none}
+  #uxbot-panel.expanded{right:auto;bottom:auto;left:50%;top:50%;width:min(980px,92vw);height:min(680px,86vh)}
+  #uxbot-panel.expanded.open{transform:translate(-50%,-50%)}
+  .uxbot-main{display:flex;flex-direction:column;flex:1 1 auto;min-width:0;min-height:0}
+
+  /* ===== expand-to-center: backdrop + sidebar (2-pane) ===== */
+  #uxbot-backdrop{
+    position:fixed;inset:0;z-index:290;background:rgba(6,8,14,.55);
+    opacity:0;visibility:hidden;
+    transition:opacity .3s var(--ease),visibility .3s var(--ease);
+  }
+  #uxbot-backdrop.show{opacity:1;visibility:visible}
+
+  .uxbot-side{
+    display:none;flex:0 0 212px;flex-direction:column;gap:6px;
+    padding:16px;border-right:1px solid var(--line);background:var(--surface-soft);
+  }
+  #uxbot-panel.expanded .uxbot-side{display:flex}
+  .uxbot-side-title{font-family:"Pretendard";font-weight:700;font-size:13px;color:var(--ink-soft);letter-spacing:.04em;padding:4px 6px 8px}
+  .uxbot-topics{display:flex;flex-direction:column;gap:2px;flex:1;overflow-y:auto}
+  .uxbot-topic{
+    text-align:left;background:none;border:none;color:var(--ink-soft);
+    font-family:"Pretendard";font-size:13.5px;padding:10px 11px;border-radius:9px;cursor:pointer;
+    transition:background .2s,color .2s;
+  }
+  .uxbot-topic:hover{background:var(--surface-softer);color:var(--ink)}
+  .uxbot-topic:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .uxbot-newchat{
+    margin-top:8px;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    background:none;border:1px solid var(--line);color:var(--ink);
+    font-family:"Pretendard";font-size:13.5px;padding:10px 12px;border-radius:10px;cursor:pointer;
+    transition:border-color .2s,background .2s;
+  }
+  .uxbot-newchat:hover{border-color:var(--accent);background:var(--accent-glow)}
+  .uxbot-newchat:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  .uxbot-head-actions{display:flex;align-items:center;gap:4px}
+  #uxbot-expand{background:none;border:none;color:var(--ink-soft);font-size:15px;line-height:1;cursor:pointer;padding:6px;border-radius:8px}
+  #uxbot-expand:hover{color:var(--ink)}
+  #uxbot-expand:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  @media (max-width:640px){
+    #uxbot-panel.expanded{width:96vw;height:90vh}
+    #uxbot-panel.expanded .uxbot-side{display:none}
+  }
+
   .uxbot-head{
     display:flex;align-items:center;justify-content:space-between;gap:10px;
     padding:16px 18px;border-bottom:1px solid var(--line);background:var(--surface-soft);
@@ -334,7 +379,8 @@
   }
 
   @media (prefers-reduced-motion:reduce){
-    #uxbot-panel{transition:opacity .01s,visibility .01s;transform:none}
+    #uxbot-panel{transition:opacity .01s,visibility .01s}
+    #uxbot-backdrop{transition:opacity .01s,visibility .01s}
     .uxbot-typing span{animation:none}
   }
 
@@ -465,20 +511,31 @@
   <button id="uxbot-toggle" type="button" aria-expanded="false" aria-controls="uxbot-panel" aria-label="UX 담당 챗봇 열기">
     <i class="fa-solid fa-headset" aria-hidden="true"></i> UX 상담봇
   </button>
+  <div id="uxbot-backdrop" aria-hidden="true"></div>
   <section id="uxbot-panel" role="dialog" aria-modal="false" aria-label="UX 담당 챗봇" aria-hidden="true">
-    <header class="uxbot-head">
-      <div>
-        <div class="title">UX 담당봇</div>
-        <div class="sub">UX 컨설팅 문의를 도와드려요</div>
-      </div>
-      <button id="uxbot-close" type="button" aria-label="챗봇 닫기"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
-    </header>
-    <div id="uxbot-log" aria-live="polite"></div>
-    <div id="uxbot-quick" class="dragscroll"></div>
-    <form id="uxbot-form" autocomplete="off">
-      <input id="uxbot-input" type="text" placeholder="궁금한 점을 입력하세요…" aria-label="메시지 입력" />
-      <button id="uxbot-send" type="submit">전송 <i class="fa-solid fa-paper-plane" aria-hidden="true"></i></button>
-    </form>
+    <aside class="uxbot-side" aria-label="대화 주제">
+      <div class="uxbot-side-title">대화 주제</div>
+      <nav id="uxbot-topics" class="uxbot-topics" aria-label="주제 바로가기"></nav>
+      <button id="uxbot-newchat" class="uxbot-newchat" type="button"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> 새 대화</button>
+    </aside>
+    <div class="uxbot-main">
+      <header class="uxbot-head">
+        <div>
+          <div class="title">UX 담당봇</div>
+          <div class="sub">UX 컨설팅 문의를 도와드려요</div>
+        </div>
+        <div class="uxbot-head-actions">
+          <button id="uxbot-expand" type="button" aria-label="가운데로 확장"><i class="fa-solid fa-up-right-and-down-left-from-center" aria-hidden="true"></i></button>
+          <button id="uxbot-close" type="button" aria-label="챗봇 닫기"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+        </div>
+      </header>
+      <div id="uxbot-log" aria-live="polite"></div>
+      <div id="uxbot-quick" class="dragscroll"></div>
+      <form id="uxbot-form" autocomplete="off">
+        <input id="uxbot-input" type="text" placeholder="궁금한 점을 입력하세요…" aria-label="메시지 입력" />
+        <button id="uxbot-send" type="submit">전송 <i class="fa-solid fa-paper-plane" aria-hidden="true"></i></button>
+      </form>
+    </div>
   </section>
 
   <!-- ============ UXBOT: knowledge base + intent matcher ============ -->
