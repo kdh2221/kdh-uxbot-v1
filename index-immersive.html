@@ -337,6 +337,13 @@
     #uxbot-panel{transition:opacity .01s,visibility .01s;transform:none}
     .uxbot-typing span{animation:none}
   }
+
+  /* ============ Hero three.js particle wave ============ */
+  #hero-gl{
+    position:absolute;inset:0;z-index:1;
+    width:100%;height:100%;display:block;
+    pointer-events:none;
+  }
 </style>
 <script>
   /* anti-FOUC: apply saved theme before first paint */
@@ -375,6 +382,7 @@
     <!-- 1 · HERO -->
     <section class="panel section" data-anchor="s1" style="--h:200">
       <div class="bg" aria-hidden="true"></div>
+      <canvas id="hero-gl" aria-hidden="true"></canvas>
       <div class="grain" aria-hidden="true"></div>
       <div class="inner">
         <span class="eyebrow rv"><span class="idx">01</span><span class="ln"></span>AI 혁신의 물결</span>
@@ -756,6 +764,9 @@
     }, true);
   })();
   </script>
+
+  <!-- three.js r160 (UMD) — Hero particle wave -->
+  <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
 
   <!-- fullPage.js v4 -->
   <script src="https://cdn.jsdelivr.net/npm/fullpage.js@4/dist/fullpage.min.js"></script>
