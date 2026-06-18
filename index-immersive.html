@@ -743,7 +743,7 @@
 
     function fpScroll(allow){
       if (window.fullpage_api) {
-        try { fullpage_api.setAllowScrolling(allow); fullpage_api.setKeyboardScrolling(allow); } catch (e) {}
+        try { window.fullpage_api.setAllowScrolling(allow); window.fullpage_api.setKeyboardScrolling(allow); } catch (e) {}
       }
     }
     function setExpanded(on){
@@ -758,6 +758,7 @@
         : "fa-solid fa-up-right-and-down-left-from-center";
       fpScroll(!on);            // lock background scroll while modal is open
       if (on && input) input.focus();
+      else if (!on && expandBtn) expandBtn.focus();
     }
 
     function openPanel(){
