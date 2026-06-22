@@ -20,6 +20,7 @@ function die(msg){ console.error("ERROR: " + msg); process.exit(1); }
 
 function htmlToText(html){
   return String(html || "")
+    .replace(/<h[1-6][^>]*>/gi, "\n\n")
     .replace(/<\s*(br|\/p|\/li|\/h[1-6]|\/tr|\/div)\s*>/gi, "\n")
     .replace(/<[^>]+>/g, " ")
     .replace(/&nbsp;/gi, " ")
@@ -34,7 +35,12 @@ function htmlToText(html){
 function chunk(text, title, url){
   const parts = text.split(/\n{2,}/).map(s => s.trim()).filter(s => s.length > 20);
   const list = parts.length ? parts : (text ? [text] : []);
-  return list.map(s => ({ heading: title, text: s.slice(0, 1200), url }));
+  return list.map(s => {
+    const lines = s.split("\n");
+    const h = lines[0].trim();
+    const heading = (lines.length > 1 && h.length > 0 && h.length <= 120) ? h : title;
+    return { heading, text: s.slice(0, 1200), url };
+  });
 }
 
 function writeKB(docs, meta){
