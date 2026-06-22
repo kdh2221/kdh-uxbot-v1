@@ -784,23 +784,17 @@
       send(input.value);
     });
 
-    // sidebar: topic shortcuts + new chat (expanded 2-pane)
-    var TOPICS = [
-      { label: "서비스 소개", q: "UX 컨설팅이 뭔가요?" },
-      { label: "진행 절차",   q: "진행 절차가 궁금해요" },
-      { label: "기간·비용",   q: "기간과 비용은 어떻게 되나요?" },
-      { label: "원격 진행",   q: "원격으로도 진행되나요?" },
-      { label: "산출물",      q: "어떤 산출물을 받게 되나요?" },
-      { label: "도입 문의",   q: "상담 신청하고 싶어요" }
-    ];
+    // sidebar: topic shortcuts (from UXDB KB) + new chat (expanded 2-pane)
     function renderTopics(){
       if (!topicsNav) return;
       topicsNav.innerHTML = "";
-      TOPICS.forEach(function(t){
+      var topics = (kb && kb.topics) ? kb.topics : [];
+      topics.forEach(function(t){
         var b = document.createElement("button");
         b.type = "button";
         b.className = "uxbot-topic";
         b.textContent = t.label;
+        b.title = t.label;
         b.addEventListener("click", function(){ if (!busy) send(t.q); });
         topicsNav.appendChild(b);
       });
